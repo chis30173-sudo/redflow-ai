@@ -59,12 +59,13 @@ export async function POST(request) {
    });
 
   } catch (error) {
-    console.error("DeepSeek Error:", error);
+ console.error("DeepSeek Error:", error);
 
-    return NextResponse.json({
-      error: String(error)
-    }, {
-      status: 500
-    });
-  }
+ return NextResponse.json({
+   error: error?.message || "unknown error",
+   stack: error?.stack || "",
+   response: error?.response?.data || null
+ }, {
+   status:500
+ });
 }
