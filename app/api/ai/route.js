@@ -50,7 +50,7 @@ export async function POST(request) {
    return NextResponse.json({
   mode: "live",
   text: response.choices[0].message.content || "AI 暂未返回文本。"
-});
+});}
 
 catch (error) {
  console.error("DeepSeek Error:", error);
