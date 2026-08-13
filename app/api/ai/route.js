@@ -39,7 +39,7 @@ export async function POST(request) {
   apiKey: process.env.DEEPSEEK_API_KEY,
   baseURL: "https://api.deepseek.com/v1"
 });
-    // redeploy
+    redeploy worker
    const response = await client.chat.completions.create({
   model: "deepseek-chat",
   messages: [
@@ -69,4 +69,5 @@ export async function POST(request) {
  }, {
    status:500
  });
+}
 }
