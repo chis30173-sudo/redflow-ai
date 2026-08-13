@@ -39,6 +39,7 @@ export async function POST(request) {
   apiKey: process.env.DEEPSEEK_API_KEY,
   baseURL: "https://api.deepseek.com/v1"
 });
+    // redeploy
    const response = await client.chat.completions.create({
   model: "deepseek-chat",
   messages: [
