@@ -37,8 +37,8 @@ export async function POST(request) {
     });
 
     return NextResponse.json({ mode: "live", text: response.output_text || "AI 暂未返回文本。" });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "AI 请求失败，请检查配置后重试。" }, { status: 500 });
+  } return NextResponse.json({
+  error: String(error)
+}, { status:500 });
   }
 }
