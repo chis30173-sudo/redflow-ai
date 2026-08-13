@@ -25,7 +25,7 @@ export async function POST(request) {
   try {
     const body = await request.json();
     const type = body.type || "ideas";
-    if (!process.env.OPENAI_API_KEY) {
+   if (!process.env.DEEPSEEK_API_KEY) {
       return NextResponse.json({ mode: "mock", text: mock[type] || mock.ideas });
     }
 
@@ -34,14 +34,21 @@ export async function POST(request) {
   baseURL: "https://api.deepseek.com"
 });
     const response = await client.responses.create({
-      model: model: "deepseek-chat",
+      model: "deepseek-chat",
       instructions: "你是 RedFlow AI 的中文内容运营助手。",
       input: promptFor(type, body.payload || {})
     });
 
-    return NextResponse.json({ mode: "live", text: response.output_text || "AI 暂未返回文本。" });
-  } return NextResponse.json({
-  error: String(error)
-}, { status:500 });
-  }
+   return NextResponse.json({
+  mode: "live",
+  text: response.output_text || "AI 暂未返回文本。"
+});
+
+} catch (error) {
+  console.error(error);
+
+  return NextResponse.json(
+    { error: String(error) },
+    { status: 500 }
+  );
 }
