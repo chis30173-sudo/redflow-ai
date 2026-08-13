@@ -35,12 +35,12 @@ export async function POST(request) {
       return NextResponse.json({ mode: "mock", text: mock[type] || mock.ideas });
     }
 
-    const client = new OpenAI({
+   const client = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY,
   baseURL: "https://api.deepseek.com/v1"
 });
-    redeploy worker
-   const response = await client.chat.completions.create({
+
+const response = await client.chat.completions.create({
   model: "deepseek-chat",
   messages: [
     {
