@@ -33,15 +33,23 @@ export async function POST(request) {
   apiKey: process.env.DEEPSEEK_API_KEY,
   baseURL: "https://api.deepseek.com"
 });
-    const response = await client.responses.create({
-      model: "deepseek-chat",
-      instructions: "你是 RedFlow AI 的中文内容运营助手。",
-      input: promptFor(type, body.payload || {})
-    });
+    const response = await client.chat.completions.create({
+  model: "deepseek-chat",
+  messages: [
+    {
+      role: "system",
+      content: "你是 RedFlow AI 的中文内容运营助手。"
+    },
+    {
+      role: "user",
+      content: promptFor(type, body.payload || {})
+    }
+  ]
+});
 
    return NextResponse.json({
   mode: "live",
-  text: response.output_text || "AI 暂未返回文本。"
+  text: response.choices[0].message.content || "AI 暂未返回文本。"
 });
 
 } catch (error) {
