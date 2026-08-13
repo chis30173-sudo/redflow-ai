@@ -1,5 +1,4 @@
-name: Deploy RedFlow AI to Cloudflare
-
+name: Deploy RedFlow AI to Cloudflare v2
 on:
   push:
     branches:
