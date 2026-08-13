@@ -29,9 +29,12 @@ export async function POST(request) {
       return NextResponse.json({ mode: "mock", text: mock[type] || mock.ideas });
     }
 
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const client = new OpenAI({
+  apiKey: process.env.DEEPSEEK_API_KEY,
+  baseURL: "https://api.deepseek.com"
+});
     const response = await client.responses.create({
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+      model: model: "deepseek-chat",
       instructions: "你是 RedFlow AI 的中文内容运营助手。",
       input: promptFor(type, body.payload || {})
     });
