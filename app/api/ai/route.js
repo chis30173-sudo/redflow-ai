@@ -24,6 +24,12 @@ function promptFor(type, payload = {}) {
 export async function POST(request) {
   try {
     const body = await request.json();
+
+    console.log(
+      "DeepSeek key exists:",
+      !!process.env.DEEPSEEK_API_KEY
+    );
+
     const type = body.type || "ideas";
    if (!process.env.DEEPSEEK_API_KEY) {
       return NextResponse.json({ mode: "mock", text: mock[type] || mock.ideas });
@@ -31,7 +37,7 @@ export async function POST(request) {
 
     const client = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY,
-  baseURL: "https://api.deepseek.com"
+  baseURL: "https://api.deepseek.com/v1"
 });
    const response = await client.chat.completions.create({
   model: "deepseek-chat",
