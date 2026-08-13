@@ -47,17 +47,18 @@ export async function POST(request) {
   ]
 });
 
-   return NextResponse.json({
-  mode: "live",
-  text: response.choices[0].message.content || "AI 暂未返回文本。"
-});}
+      return NextResponse.json({
+     mode: "live",
+     text: response.choices[0].message.content || "AI 暂未返回文本。"
+   });
 
-catch (error) {
- console.error("DeepSeek Error:", error);
+  } catch (error) {
+    console.error("DeepSeek Error:", error);
 
- return NextResponse.json({
-   error: String(error)
- }, {
-   status:500
- });
+    return NextResponse.json({
+      error: String(error)
+    }, {
+      status: 500
+    });
+  }
 }
