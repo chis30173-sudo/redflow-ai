@@ -31,7 +31,7 @@ export async function POST(request) {
 
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const response = await client.responses.create({
-      model: process.env.OPENAI_MODEL || "gpt-5-mini",
+      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
       instructions: "你是 RedFlow AI 的中文内容运营助手。",
       input: promptFor(type, body.payload || {})
     });
