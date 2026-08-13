@@ -33,7 +33,7 @@ export async function POST(request) {
   apiKey: process.env.DEEPSEEK_API_KEY,
   baseURL: "https://api.deepseek.com"
 });
-    const response = await client.chat.completions.create({
+   const response = await client.chat.completions.create({
   model: "deepseek-chat",
   messages: [
     {
@@ -52,12 +52,12 @@ export async function POST(request) {
   text: response.choices[0].message.content || "AI 暂未返回文本。"
 });
 
-} catch (error) {
-  console.error(error);
+catch (error) {
+ console.error("DeepSeek Error:", error);
 
-  return NextResponse.json(
-    { error: String(error) },
-    { status: 500 }
- );
-}
+ return NextResponse.json({
+   error: String(error)
+ }, {
+   status:500
+ });
 }
