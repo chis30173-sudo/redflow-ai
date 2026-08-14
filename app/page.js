@@ -5,119 +5,173 @@ import { useState } from "react";
 
 export default function Home(){
 
-  const [mode,setMode]=useState("topic");
+const [mode,setMode]=useState("topic");
 
-  const [industry,setIndustry]=useState("");
-  const [target,setTarget]=useState("");
-  const [platform,setPlatform]=useState("");
+const [industry,setIndustry]=useState("");
+const [target,setTarget]=useState("");
+const [platform,setPlatform]=useState("");
 
-  const [content,setContent]=useState("");
+const [content,setContent]=useState("");
 
-  const [result,setResult]=useState("");
+const [result,setResult]=useState("");
 
-
-  async function generate(){
-
-
-    setResult("AI正在分析生成...");
-
-
-    const res = await fetch("/api/ai",{
-
-      method:"POST",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-
-      body:JSON.stringify({
-
-        mode,
-
-        industry,
-
-        target,
-
-        platform,
-
-        content
-
-      })
-
-    });
+const [loading,setLoading]=useState(false);
 
 
 
-    const data = await res.json();
+async function generate(){
+
+setLoading(true);
+
+setResult("🚀 AI正在分析，请稍等...");
+
+
+try{
+
+
+const res=await fetch("/api/ai",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+
+body:JSON.stringify({
+
+mode,
+
+industry,
+
+target,
+
+platform,
+
+content
+
+})
+
+
+});
 
 
 
-    setResult(
-      data.text || 
-      "生成失败，请检查API"
-    );
+const data=await res.json();
 
 
-  }
-
-
-
-
-  return (
-
-    <main
-    style={{
-      padding:"40px",
-      maxWidth:"900px"
-    }}
-    >
-
-
-      <h1>
-        🚀 RedFlow AI
-      </h1>
-
-
-      <p>
-        AI爆款内容增长助手
-      </p>
+setResult(
+data.text ||
+"生成失败"
+);
 
 
 
-      <div
-      style={{
-        margin:"30px 0"
-      }}
-      >
+}
+
+catch(e){
+
+setResult(
+"请求失败，请检查网络"
+);
 
 
-        <button
-        onClick={()=>setMode("topic")}
-        >
-        🔥 爆款选题
-        </button>
+}
 
 
+setLoading(false);
 
-        <button
-        onClick={()=>setMode("article")}
-        style={{marginLeft:"10px"}}
-        >
-        ✍️ 爆款图文
-        </button>
+
+}
 
 
 
-        <button
-        onClick={()=>setMode("rewrite")}
-        style={{marginLeft:"10px"}}
-        >
-        🎯 对标同行
-        </button>
 
 
-      </div>
+function copyText(){
+
+navigator.clipboard.writeText(result);
+
+alert("复制成功");
+
+
+}
+
+
+
+
+return(
+
+<main
+
+style={{
+
+padding:"40px",
+
+maxWidth:"900px"
+
+}}
+
+>
+
+
+<h1>
+🚀 RedFlow AI
+</h1>
+
+
+<p>
+AI爆款内容增长助手
+</p>
+
+
+
+<div
+style={{
+margin:"30px 0"
+}}
+>
+
+
+<button
+onClick={()=>setMode("topic")}
+>
+
+🔥 爆款选题
+
+</button>
+
+
+<button
+
+style={{marginLeft:"10px"}}
+
+onClick={()=>setMode("article")}
+
+>
+
+✍️ 爆款图文
+
+</button>
+
+
+
+<button
+
+style={{marginLeft:"10px"}}
+
+onClick={()=>setMode("rewrite")}
+
+>
+
+🎯 对标同行
+
+</button>
+
+
+</div>
+
+
 
 
 
@@ -125,8 +179,7 @@ export default function Home(){
 {
 mode==="topic" &&
 
-<div>
-
+<section>
 
 <h2>
 🔥 爆款选题生成
@@ -143,13 +196,11 @@ onChange={
 e=>setIndustry(e.target.value)
 }
 
-placeholder="例如：美妆、电商、教育"
-
 />
 
 
-
 <p>目标用户</p>
+
 
 <input
 
@@ -159,13 +210,12 @@ onChange={
 e=>setTarget(e.target.value)
 }
 
-placeholder="例如：18-30岁女生"
-
 />
 
 
 
 <p>平台</p>
+
 
 <input
 
@@ -175,12 +225,10 @@ onChange={
 e=>setPlatform(e.target.value)
 }
 
-placeholder="小红书 / 抖音"
-
 />
 
 
-</div>
+</section>
 
 }
 
@@ -189,59 +237,25 @@ placeholder="小红书 / 抖音"
 
 
 {
-mode==="article" &&
+(mode==="article" ||
+mode==="rewrite")
 
-<div>
+&&
 
+<section>
 
 <h2>
-✍️ 爆款图文生成
-</h2>
-
-
-<p>
-输入主题
-</p>
-
-
-<textarea
-
-rows="6"
-
-value={content}
-
-onChange={
-e=>setContent(e.target.value)
-}
-
-placeholder="例如：大学生平价护肤推荐"
-
-/>
-
-
-
-</div>
-
-}
-
-
-
-
 
 {
-mode==="rewrite" &&
+mode==="article"
+?
+"✍️ 爆款图文生成"
+:
+"🎯 一键对标同行"
+}
 
-<div>
 
-
-<h2>
-🎯 一键对标同行
 </h2>
-
-
-<p>
-复制同行爆款内容
-</p>
 
 
 <textarea
@@ -254,13 +268,20 @@ onChange={
 e=>setContent(e.target.value)
 }
 
-placeholder="粘贴同行小红书爆款笔记"
+
+placeholder={
+mode==="article"
+?
+"输入你的主题，例如：大学生护肤"
+:
+"粘贴同行爆款笔记"
+}
 
 />
 
 
+</section>
 
-</div>
 
 }
 
@@ -268,14 +289,19 @@ placeholder="粘贴同行小红书爆款笔记"
 
 
 
-<br/>
-
 
 <button
+
 onClick={generate}
+
 style={{
-marginTop:"20px"
+
+marginTop:"25px",
+
+fontSize:"16px"
+
 }}
+
 >
 
 🚀 开始生成
@@ -285,10 +311,15 @@ marginTop:"20px"
 
 
 
+
 <h2
+
 style={{
-marginTop:"40px"
+
+marginTop:"50px"
+
 }}
+
 >
 
 📌 AI生成结果
@@ -297,30 +328,74 @@ marginTop:"40px"
 
 
 
-<div
-style={{
 
-whiteSpace:"pre-wrap",
+
+<div
+
+style={{
 
 background:"#f7f7f7",
 
-padding:"20px",
+padding:"25px",
 
-borderRadius:"10px"
+borderRadius:"15px",
+
+lineHeight:"1.8",
+
+minHeight:"150px"
 
 }}
+
 >
 
 
-{result}
+{
+loading
+
+?
+
+"AI正在思考..."
+
+:
+
+result
+
+}
+
 
 
 </div>
 
 
 
-    </main>
+{
 
-  );
+result &&
+
+<button
+
+onClick={copyText}
+
+style={{
+
+marginTop:"15px"
+
+}}
+
+>
+
+📋 复制全部内容
+
+</button>
+
+
+}
+
+
+
+</main>
+
+
+)
 
 }
