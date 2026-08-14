@@ -25,7 +25,6 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-   const body = await request.json();
 
 console.log(
   "KEY EXISTS:",
