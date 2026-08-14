@@ -1,4 +1,6 @@
+import { NextResponse } from "next/server";
 import { supabase } from "../../../lib/supabase";
+
 
 
 export async function POST(req){
@@ -8,7 +10,6 @@ try{
 
 
 const body = await req.json();
-
 
 
 const {
@@ -23,192 +24,118 @@ platform,
 
 content
 
-
 }=body;
 
 
 
-let prompt="";
+const prompt = `
+
+你是一名顶级内容增长专家。
+
+你的身份：
+
+- 小红书爆款运营专家
+- 电商增长顾问
+- 内容营销策划师
 
 
+请根据用户需求生成高质量内容。
 
 
+用户信息：
 
-if(mode==="topic"){
-
-
-prompt=`
-
-你是一名小红书爆款内容运营专家。
-
-根据下面信息生成10个爆款选题。
+内容类型：
+${mode}
 
 
 行业：
-
 ${industry}
 
 
 目标用户：
-
 ${target}
 
 
-平台：
-
+发布平台：
 ${platform}
 
 
+用户输入：
+${content}
 
-每个输出：
 
-标题：
 
-爆款原因：
+请严格按照下面结构输出：
 
-内容方向：
 
+
+================
+
+🔥 爆款标题（10个）
+
+要求：
+- 有点击欲
+- 有情绪
+- 符合平台风格
+
+
+================
+
+
+🚀 开头3秒吸引点
+
+要求：
+让用户继续阅读。
+
+
+================
+
+
+📝 正文内容
 
 
 要求：
 
-符合小红书爆款逻辑，
+包含：
 
-有点击欲望，
+1. 用户痛点
 
-适合普通创作者。
+2. 解决方案
 
+3. 产品/观点价值
 
-`;
-
-
-
-}
+4. 使用场景
 
 
+================
 
 
+💬 评论区互动设计
+
+设计3个引导评论的问题。
 
 
-
-else if(mode==="article"){
-
+================
 
 
-prompt=`
+🏷️ 推荐标签
 
-你是一名小红书爆款图文作者。
-
-
-根据主题生成高互动笔记。
+生成10个相关标签。
 
 
-
-主题：
-
-${content}
+================
 
 
 
-输出：
+注意：
 
+不要写普通介绍。
 
-标题：
+要像真实爆款账号发布的内容。
 
-
-封面文案：
-
-
-正文：
-
-
-第1页：
-
-第2页：
-
-第3页：
-
-第4页：
-
-第5页：
-
-
-
-热门标签：
+语言自然，不像AI。
 
 `;
-
-
-
-}
-
-
-
-
-
-
-
-else if(mode==="rewrite"){
-
-
-
-prompt=`
-
-你是一名内容增长专家。
-
-
-
-分析下面同行爆款内容：
-
-
-${content}
-
-
-
-输出：
-
-
-一、同行爆款原因
-
-
-二、用户痛点
-
-
-三、原创升级版本
-
-
-
-新标题：
-
-正文：
-
-封面：
-
-标签：
-
-`;
-
-
-
-}
-
-
-
-
-
-
-
-else{
-
-
-prompt=content;
-
-
-}
-
-
-
-
 
 
 
@@ -216,55 +143,38 @@ prompt=content;
 
 const response = await fetch(
 
-
 "https://api.deepseek.com/chat/completions",
-
 
 {
 
-
 method:"POST",
-
 
 headers:{
 
-
 "Content-Type":"application/json",
-
 
 "Authorization":
 
 `Bearer ${process.env.DEEPSEEK_API_KEY}`
 
-
 },
-
 
 
 body:JSON.stringify({
 
-
 model:"deepseek-chat",
-
-
 
 messages:[
 
-
 {
-
 
 role:"user",
 
-
 content:prompt
-
 
 }
 
-
 ],
-
 
 
 temperature:0.8
@@ -275,49 +185,27 @@ temperature:0.8
 
 }
 
-
 );
 
 
 
 
 
-
-
-const data=await response.json();
-
+const result = await response.json();
 
 
 
+const text =
 
-if(!response.ok){
+result.choices?.[0]?.message?.content ||
 
-
-return Response.json({
-
-error:data
-
-});
-
-
-}
+"生成失败";
 
 
 
 
 
-
-const output=data.choices[0].message.content;
-
-
-
-
-
-
-
-
-
-// 保存 Supabase 历史记录
+// 保存数据库
 
 await supabase
 
@@ -325,37 +213,40 @@ await supabase
 
 .insert({
 
-
-type:mode,
-
-
 input:
 
-industry || content,
+JSON.stringify({
+
+industry,
+
+target,
+
+platform,
+
+content
+
+}),
 
 
-output:output
+output:text,
 
 
-
-});
-
-
-
-
-
-
-
-
-
-return Response.json({
-
-
-text:output
+type:mode
 
 
 });
 
+
+
+
+
+
+
+return NextResponse.json({
+
+text
+
+});
 
 
 
@@ -366,15 +257,23 @@ text:output
 catch(error){
 
 
+console.log(error);
 
-return Response.json({
 
+
+return NextResponse.json({
 
 error:error.message
 
+},
 
-});
+{
 
+status:500
+
+}
+
+);
 
 
 }
