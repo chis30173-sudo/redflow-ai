@@ -1,63 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 
 export default function Home(){
 
-
 const [mode,setMode]=useState("topic");
-
 
 const [industry,setIndustry]=useState("");
 const [target,setTarget]=useState("");
 const [platform,setPlatform]=useState("");
 
-
 const [content,setContent]=useState("");
-
 
 const [result,setResult]=useState("");
 
-
-const [loading,setLoading]=useState(false);
-
-
-// 历史记录
 const [history,setHistory]=useState([]);
 
-
+const [loading,setLoading]=useState(false);
 
 
 
 async function generate(){
 
-
 setLoading(true);
 
-setResult("🚀 AI正在分析，请稍等...");
+setResult("🚀 AI正在生成...");
 
 
 try{
 
-
 const res=await fetch("/api/ai",{
-
 
 method:"POST",
 
-
 headers:{
-
-
 "Content-Type":"application/json"
-
-
 },
 
-
 body:JSON.stringify({
-
 
 mode,
 
@@ -69,104 +51,108 @@ platform,
 
 content
 
-
 })
 
-
 });
-
 
 
 const data=await res.json();
 
 
-
-const output=data.text || "生成失败";
-
+setResult(data.text || "生成失败");
 
 
-setResult(output);
+// 刷新历史
 
-
-
-// 保存历史记录
-
-setHistory([
-
-{
-
-id:Date.now(),
-
-type:mode,
-
-input:
-industry || content,
-
-output
-
-},
-
-...history
-
-]);
-
+loadHistory();
 
 
 }
-
-
 
 catch(error){
 
-
-setResult(
-"请求失败，请检查网络"
-);
-
+setResult("请求失败");
 
 }
-
 
 
 setLoading(false);
 
-
-
 }
 
 
 
 
+async function loadHistory(){
 
+const {
 
+data,
+error
 
-function copyText(){
+}=await supabase
 
+.from("generations")
 
-navigator.clipboard.writeText(result);
+.select("*")
 
+.order(
 
-alert("复制成功");
+"created_at",
 
-
+{
+ascending:false
 }
-
-
-
-
-
-
-function deleteHistory(id){
-
-
-setHistory(
-
-history.filter(
-
-(item)=>item.id!==id
 
 )
 
+.limit(20);
+
+
+
+if(data){
+
+setHistory(data);
+
+}
+
+
+}
+
+
+
+
+async function deleteItem(id){
+
+
+await supabase
+
+.from("generations")
+
+.delete()
+
+.eq(
+"id",
+id
+);
+
+
+loadHistory();
+
+
+}
+
+
+
+
+function copyText(text){
+
+
+navigator.clipboard.writeText(text);
+
+
+alert(
+"复制成功"
 );
 
 
@@ -175,11 +161,17 @@ history.filter(
 
 
 
+useEffect(()=>{
+
+loadHistory();
+
+},[]);
 
 
-return(
 
 
+
+return (
 
 <main
 
@@ -187,20 +179,16 @@ style={{
 
 padding:"40px",
 
-maxWidth:"900px",
-
-margin:"auto"
+maxWidth:"1000px"
 
 }}
 
 >
 
 
-
 <h1>
 🚀 RedFlow AI
 </h1>
-
 
 
 <p>
@@ -209,23 +197,11 @@ AI爆款内容增长助手
 
 
 
-
-
-<div
-
-style={{
-
-margin:"30px 0"
-
-}}
-
->
+<div>
 
 
 <button
-
 onClick={()=>setMode("topic")}
-
 >
 
 🔥 爆款选题
@@ -234,12 +210,11 @@ onClick={()=>setMode("topic")}
 
 
 
-
 <button
 
-style={{marginLeft:"10px"}}
-
 onClick={()=>setMode("article")}
+
+style={{marginLeft:"10px"}}
 
 >
 
@@ -249,13 +224,11 @@ onClick={()=>setMode("article")}
 
 
 
-
-
 <button
 
-style={{marginLeft:"10px"}}
-
 onClick={()=>setMode("rewrite")}
+
+style={{marginLeft:"10px"}}
 
 >
 
@@ -264,12 +237,7 @@ onClick={()=>setMode("rewrite")}
 </button>
 
 
-
 </div>
-
-
-
-
 
 
 
@@ -280,21 +248,14 @@ mode==="topic"
 
 &&
 
-
 <section>
-
 
 <h2>
 🔥 爆款选题生成
 </h2>
 
 
-
-
-<p>
-行业
-</p>
-
+<p>行业</p>
 
 <input
 
@@ -308,10 +269,7 @@ e=>setIndustry(e.target.value)
 
 
 
-<p>
-目标用户
-</p>
-
+<p>目标用户</p>
 
 <input
 
@@ -326,10 +284,7 @@ e=>setTarget(e.target.value)
 
 
 
-<p>
-平台
-</p>
-
+<p>平台</p>
 
 <input
 
@@ -342,7 +297,6 @@ e=>setPlatform(e.target.value)
 />
 
 
-
 </section>
 
 
@@ -351,24 +305,16 @@ e=>setPlatform(e.target.value)
 
 
 
-
-
-
-
-
-
 {
-(mode==="article" ||
-mode==="rewrite")
+
+(mode==="article" || mode==="rewrite")
 
 &&
-
 
 <section>
 
 
 <h2>
-
 
 {
 
@@ -380,55 +326,22 @@ mode==="article"
 
 :
 
-"🎯 一键对标同行"
-
+"🎯 对标同行"
 
 }
-
 
 </h2>
 
 
 
-
 <textarea
 
-
-rows="10"
-
-
-style={{
-
-width:"100%"
-
-}}
-
+rows="8"
 
 value={content}
 
-
 onChange={
-
 e=>setContent(e.target.value)
-
-}
-
-
-
-placeholder={
-
-
-mode==="article"
-
-?
-
-"输入你的主题，例如：大学生护肤"
-
-:
-
-"粘贴同行爆款笔记"
-
-
 }
 
 
@@ -444,34 +357,19 @@ mode==="article"
 
 
 
-
-
-
-
-
 <button
-
 
 onClick={generate}
 
-
-
 style={{
 
-
-marginTop:"25px",
-
-fontSize:"16px"
-
+marginTop:"20px"
 
 }}
-
-
 
 >
 
 🚀 开始生成
-
 
 </button>
 
@@ -479,14 +377,7 @@ fontSize:"16px"
 
 
 
-
-
-
-<h2
-
-style={{marginTop:"50px"}}
-
->
+<h2>
 
 📌 AI生成结果
 
@@ -494,33 +385,21 @@ style={{marginTop:"50px"}}
 
 
 
-
-
-
 <div
-
 
 style={{
 
-background:"#f7f7f7",
+background:"#f5f5f5",
 
-padding:"25px",
+padding:"20px",
 
-borderRadius:"15px",
+borderRadius:"12px",
 
-lineHeight:"1.8",
-
-whiteSpace:"pre-wrap",
-
-minHeight:"150px"
-
+whiteSpace:"pre-wrap"
 
 }}
 
-
-
 >
-
 
 {
 
@@ -528,12 +407,11 @@ loading
 
 ?
 
-"AI正在思考..."
+"AI思考中..."
 
 :
 
 result
-
 
 }
 
@@ -545,63 +423,17 @@ result
 
 
 
-
-{
-
-result &&
-
-
-<button
-
-
-onClick={copyText}
-
+<h2
 
 style={{
 
-marginTop:"15px"
+marginTop:"50px"
 
 }}
-
 
 >
 
-
-📋 复制全部内容
-
-
-</button>
-
-
-}
-
-
-
-
-
-
-
-
-
-<hr
-
-style={{
-
-margin:"50px 0"
-
-}}
-
-/>
-
-
-
-
-
-
-
-<h2>
-
-📚 历史生成记录
+📚 我的历史生成
 
 </h2>
 
@@ -609,32 +441,16 @@ margin:"50px 0"
 
 
 
-
 {
 
-history.length===0
-
-?
-
-<p>
-暂无记录
-</p>
-
-
-:
-
 history.map(item=>(
-
 
 
 <div
 
 key={item.id}
 
-
 style={{
-
-background:"#fff",
 
 border:"1px solid #ddd",
 
@@ -646,19 +462,26 @@ borderRadius:"12px"
 
 }}
 
-
 >
-
 
 
 <p>
 
-类型：
+时间：
 
-{item.type}
+{
+
+new Date(
+
+item.created_at
+
+)
+
+.toLocaleString()
+
+}
 
 </p>
-
 
 
 <p>
@@ -671,7 +494,15 @@ borderRadius:"12px"
 
 
 
-<pre>
+<pre
+
+style={{
+
+whiteSpace:"pre-wrap"
+
+}}
+
+>
 
 {item.output}
 
@@ -682,11 +513,29 @@ borderRadius:"12px"
 
 <button
 
-onClick={()=>deleteHistory(item.id)}
+onClick={()=>copyText(item.output)}
 
 >
 
-删除
+📋复制
+
+</button>
+
+
+
+<button
+
+onClick={()=>deleteItem(item.id)}
+
+style={{
+
+marginLeft:"10px"
+
+}}
+
+>
+
+🗑删除
 
 </button>
 
@@ -706,9 +555,6 @@ onClick={()=>deleteHistory(item.id)}
 
 </main>
 
-
-
 )
-
 
 }
