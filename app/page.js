@@ -1,29 +1,82 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 
 export default function Home(){
 
+
 const [mode,setMode]=useState("topic");
+
 
 const [industry,setIndustry]=useState("");
 const [target,setTarget]=useState("");
 const [platform,setPlatform]=useState("");
 
+
 const [content,setContent]=useState("");
+
 
 const [result,setResult]=useState("");
 
 const [loading,setLoading]=useState(false);
 
 
+const [history,setHistory]=useState([]);
+
+
+
+// 获取历史记录
+
+async function getHistory(){
+
+
+const {data,error}=await supabase
+
+.from("generations")
+
+.select("*")
+
+.order("created_at",{ascending:false})
+
+.limit(10);
+
+
+
+if(!error){
+
+setHistory(data || []);
+
+}
+
+
+}
+
+
+
+
+
+useEffect(()=>{
+
+
+getHistory();
+
+
+},[]);
+
+
+
+
 
 async function generate(){
 
+
 setLoading(true);
 
+
 setResult("🚀 AI正在分析，请稍等...");
+
 
 
 try{
@@ -31,14 +84,21 @@ try{
 
 const res=await fetch("/api/ai",{
 
+
 method:"POST",
 
+
 headers:{
+
+
 "Content-Type":"application/json"
+
+
 },
 
 
 body:JSON.stringify({
+
 
 mode,
 
@@ -50,6 +110,7 @@ platform,
 
 content
 
+
 })
 
 
@@ -60,23 +121,69 @@ content
 const data=await res.json();
 
 
-setResult(
-data.text ||
-"生成失败"
-);
+
+const aiText=data.text || "生成失败";
+
+
+
+setResult(aiText);
+
+
+
+// 保存到 Supabase
+
+
+await supabase
+
+.from("generations")
+
+.insert({
+
+
+type:mode,
+
+
+input:
+
+mode==="topic"
+
+?
+
+industry
+
+:
+
+content,
+
+
+output:aiText
+
+
+});
+
+
+
+// 更新历史
+
+getHistory();
 
 
 
 }
+
 
 catch(e){
 
+
 setResult(
+
 "请求失败，请检查网络"
+
 );
 
 
 }
+
 
 
 setLoading(false);
@@ -88,9 +195,11 @@ setLoading(false);
 
 
 
-function copyText(){
+function copyText(text){
 
-navigator.clipboard.writeText(result);
+
+navigator.clipboard.writeText(text);
+
 
 alert("复制成功");
 
@@ -100,7 +209,31 @@ alert("复制成功");
 
 
 
+
+async function deleteHistory(id){
+
+
+await supabase
+
+.from("generations")
+
+.delete()
+
+.eq("id",id);
+
+
+
+getHistory();
+
+
+}
+
+
+
+
+
 return(
+
 
 <main
 
@@ -116,15 +249,18 @@ maxWidth:"900px"
 
 
 <h1>
+
 🚀 RedFlow AI
+
 </h1>
 
 
 <p>
+
 AI爆款内容增长助手
+
 </p>
-
-
+<section>
 
 <div
 style={{
@@ -134,12 +270,15 @@ margin:"30px 0"
 
 
 <button
+
 onClick={()=>setMode("topic")}
+
 >
 
 🔥 爆款选题
 
 </button>
+
 
 
 <button
@@ -153,6 +292,7 @@ onClick={()=>setMode("article")}
 ✍️ 爆款图文
 
 </button>
+
 
 
 
@@ -175,28 +315,34 @@ onClick={()=>setMode("rewrite")}
 
 
 
-
 {
-mode==="topic" &&
+mode==="topic"
+
+&&
 
 <section>
 
+
 <h2>
+
 🔥 爆款选题生成
+
 </h2>
 
 
+
 <p>行业</p>
+
 
 <input
 
 value={industry}
 
-onChange={
-e=>setIndustry(e.target.value)
-}
+onChange={(e)=>setIndustry(e.target.value)}
 
 />
+
+
 
 
 <p>目标用户</p>
@@ -206,9 +352,7 @@ e=>setIndustry(e.target.value)
 
 value={target}
 
-onChange={
-e=>setTarget(e.target.value)
-}
+onChange={(e)=>setTarget(e.target.value)}
 
 />
 
@@ -221,41 +365,48 @@ e=>setTarget(e.target.value)
 
 value={platform}
 
-onChange={
-e=>setPlatform(e.target.value)
-}
+onChange={(e)=>setPlatform(e.target.value)}
 
 />
 
 
 </section>
 
+
 }
 
 
 
 
 
+
 {
-(mode==="article" ||
-mode==="rewrite")
+(mode==="article" || mode==="rewrite")
 
 &&
 
 <section>
 
+
 <h2>
 
 {
+
 mode==="article"
+
 ?
+
 "✍️ 爆款图文生成"
+
 :
+
 "🎯 一键对标同行"
+
 }
 
 
 </h2>
+
 
 
 <textarea
@@ -264,17 +415,21 @@ rows="10"
 
 value={content}
 
-onChange={
-e=>setContent(e.target.value)
-}
+onChange={(e)=>setContent(e.target.value)}
 
 
 placeholder={
+
 mode==="article"
+
 ?
-"输入你的主题，例如：大学生护肤"
+
+"输入主题，例如：大学生护肤"
+
 :
+
 "粘贴同行爆款笔记"
+
 }
 
 />
@@ -329,7 +484,6 @@ marginTop:"50px"
 
 
 
-
 <div
 
 style={{
@@ -350,6 +504,7 @@ minHeight:"150px"
 
 
 {
+
 loading
 
 ?
@@ -363,8 +518,8 @@ result
 }
 
 
-
 </div>
+
 
 
 
@@ -374,7 +529,7 @@ result &&
 
 <button
 
-onClick={copyText}
+onClick={()=>copyText(result)}
 
 style={{
 
@@ -388,6 +543,152 @@ marginTop:"15px"
 
 </button>
 
+}
+
+
+
+
+
+<hr
+
+style={{
+
+margin:"50px 0"
+
+}}
+
+/>
+
+
+
+
+
+<h2>
+
+📚 历史生成记录
+
+</h2>
+
+
+
+
+
+{
+
+history.length===0
+
+?
+
+<p>
+
+暂无记录
+
+</p>
+
+
+:
+
+history.map((item)=>(
+
+
+
+<div
+
+key={item.id}
+
+style={{
+
+background:"#fafafa",
+
+padding:"20px",
+
+marginBottom:"20px",
+
+borderRadius:"12px"
+
+}}
+
+>
+
+
+<p>
+
+类型：
+
+{item.type}
+
+</p>
+
+
+
+<p>
+
+输入：
+
+{item.input}
+
+</p>
+
+
+
+
+<pre
+
+style={{
+
+whiteSpace:"pre-wrap",
+
+lineHeight:"1.6"
+
+}}
+
+>
+
+{item.output}
+
+</pre>
+
+
+
+
+
+<button
+
+onClick={()=>copyText(item.output)}
+
+>
+
+📋复制
+
+</button>
+
+
+
+
+<button
+
+style={{
+
+marginLeft:"10px"
+
+}}
+
+onClick={()=>deleteHistory(item.id)}
+
+>
+
+🗑删除
+
+</button>
+
+
+
+
+</div>
+
+
+))
+
 
 }
 
@@ -396,6 +697,7 @@ marginTop:"15px"
 </main>
 
 
-)
+);
+
 
 }
