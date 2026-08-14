@@ -9,15 +9,15 @@ export default function AiTopicPage() {
   const [result, setResult] = useState("");
 
   async function generate() {
-    setResult("AI 正在生成...");
+  setResult("AI 正在生成...");
 
-    const res = await fetch("/api/ai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: `
+  const res = await fetch("/api/ai", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: `
 你是一个内容增长专家。
 
 请根据以下信息生成10个爆款内容选题：
@@ -31,13 +31,13 @@ export default function AiTopicPage() {
 2. 给出爆款原因
 3. 给出内容方向
 `,
-      }),
-    });
+    }),
+  });
 
-    const data = await res.json();
+  const data = await res.json();
 
-    setResult(data.result || "生成失败");
-  }
+  setResult(data.text || "生成失败");
+}
 
 
   return (
