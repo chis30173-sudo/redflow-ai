@@ -21,23 +21,67 @@ const [history,setHistory]=useState([]);
 const [loading,setLoading]=useState(false);
 
 
+// 爆款模板库
+
+const templates=[
+
+{
+name:"💄 美妆种草模板",
+text:"请生成一个小红书美妆种草笔记，包含吸引人的标题、痛点开头、产品卖点、使用体验和购买引导。"
+},
+
+{
+name:"🔥 产品测评模板",
+text:"请生成一个真实产品测评内容，需要包含优点、缺点、适合人群、避坑建议。"
+},
+
+{
+name:"⚠️ 避坑分享模板",
+text:"请生成一个小红书避坑类爆款内容，用真实经历分享，引发用户评论互动。"
+},
+
+{
+name:"🛒 电商卖货模板",
+text:"请生成一个高转化销售文案，突出用户痛点、产品价值、购买理由。"
+},
+
+{
+name:"🎬 短视频脚本模板",
+text:"请生成一个30秒短视频脚本，包括前三秒吸引点、内容展开、行动号召。"
+},
+
+{
+name:"📚 知识分享模板",
+text:"请生成一个知识类爆款文章，包含标题、核心观点、案例和互动问题。"
+}
+
+
+];
+
+
+
+
 
 async function generate(){
 
 setLoading(true);
 
-setResult("🚀 AI正在生成...");
+setResult("🚀 AI正在生成，请稍等...");
 
 
 try{
+
 
 const res=await fetch("/api/ai",{
 
 method:"POST",
 
 headers:{
+
 "Content-Type":"application/json"
+
 },
+
 
 body:JSON.stringify({
 
@@ -56,13 +100,19 @@ content
 });
 
 
+
 const data=await res.json();
 
 
-setResult(data.text || "生成失败");
+setResult(
+
+data.text ||
+
+"生成失败"
+
+);
 
 
-// 刷新历史
 
 loadHistory();
 
@@ -71,7 +121,11 @@ loadHistory();
 
 catch(error){
 
-setResult("请求失败");
+setResult(
+
+"请求失败"
+
+);
 
 }
 
@@ -85,10 +139,10 @@ setLoading(false);
 
 async function loadHistory(){
 
+
 const {
 
-data,
-error
+data
 
 }=await supabase
 
@@ -101,7 +155,9 @@ error
 "created_at",
 
 {
+
 ascending:false
+
 }
 
 )
@@ -122,6 +178,7 @@ setHistory(data);
 
 
 
+
 async function deleteItem(id){
 
 
@@ -132,9 +189,13 @@ await supabase
 .delete()
 
 .eq(
+
 "id",
+
 id
+
 );
+
 
 
 loadHistory();
@@ -152,7 +213,9 @@ navigator.clipboard.writeText(text);
 
 
 alert(
+
 "复制成功"
+
 );
 
 
@@ -163,14 +226,11 @@ alert(
 
 useEffect(()=>{
 
+
 loadHistory();
 
+
 },[]);
-
-
-
-
-
 return (
 
 <main
@@ -197,11 +257,91 @@ AI爆款内容增长助手
 
 
 
+
+<h2>
+🔥 爆款模板库
+</h2>
+
+
+<div
+
+style={{
+
+display:"grid",
+
+gap:"10px"
+
+}}
+
+>
+
+
+{
+
+templates.map((item,index)=>(
+
+
+<button
+
+key={index}
+
+onClick={()=>{
+
+setContent(item.text);
+
+setMode("article");
+
+}}
+
+style={{
+
+padding:"12px",
+
+textAlign:"left"
+
+}}
+
+>
+
+{item.name}
+
+</button>
+
+
+))
+
+
+}
+
+
+</div>
+
+
+
+
+
+
+<hr
+
+style={{
+
+margin:"30px 0"
+
+}}
+
+/>
+
+
+
+
+
 <div>
 
 
 <button
+
 onClick={()=>setMode("topic")}
+
 >
 
 🔥 爆款选题
@@ -212,9 +352,13 @@ onClick={()=>setMode("topic")}
 
 <button
 
-onClick={()=>setMode("article")}
+style={{
 
-style={{marginLeft:"10px"}}
+marginLeft:"10px"
+
+}}
+
+onClick={()=>setMode("article")}
 
 >
 
@@ -226,9 +370,13 @@ style={{marginLeft:"10px"}}
 
 <button
 
-onClick={()=>setMode("rewrite")}
+style={{
 
-style={{marginLeft:"10px"}}
+marginLeft:"10px"
+
+}}
+
+onClick={()=>setMode("rewrite")}
 
 >
 
@@ -243,58 +391,77 @@ style={{marginLeft:"10px"}}
 
 
 
+
+
 {
+
 mode==="topic"
 
 &&
 
 <section>
 
+
 <h2>
 🔥 爆款选题生成
 </h2>
 
 
-<p>行业</p>
+<p>
+行业
+</p>
+
 
 <input
 
 value={industry}
 
 onChange={
+
 e=>setIndustry(e.target.value)
+
 }
 
 />
 
 
 
-<p>目标用户</p>
+<p>
+目标用户
+</p>
+
 
 <input
 
 value={target}
 
 onChange={
+
 e=>setTarget(e.target.value)
+
 }
 
 />
 
 
 
+<p>
+平台
+</p>
 
-<p>平台</p>
 
 <input
 
 value={platform}
 
 onChange={
+
 e=>setPlatform(e.target.value)
+
 }
 
 />
+
 
 
 </section>
@@ -305,11 +472,15 @@ e=>setPlatform(e.target.value)
 
 
 
+
 {
 
-(mode==="article" || mode==="rewrite")
+(mode==="article" ||
+
+mode==="rewrite")
 
 &&
+
 
 <section>
 
@@ -330,20 +501,24 @@ mode==="article"
 
 }
 
+
 </h2>
 
 
 
 <textarea
 
-rows="8"
+rows="10"
 
 value={content}
 
 onChange={
+
 e=>setContent(e.target.value)
+
 }
 
+placeholder="输入内容或选择上面的模板"
 
 />
 
@@ -357,13 +532,17 @@ e=>setContent(e.target.value)
 
 
 
+
+
 <button
 
 onClick={generate}
 
 style={{
 
-marginTop:"20px"
+marginTop:"20px",
+
+fontSize:"16px"
 
 }}
 
@@ -377,7 +556,17 @@ marginTop:"20px"
 
 
 
-<h2>
+
+
+<h2
+
+style={{
+
+marginTop:"40px"
+
+}}
+
+>
 
 📌 AI生成结果
 
@@ -401,6 +590,7 @@ whiteSpace:"pre-wrap"
 
 >
 
+
 {
 
 loading
@@ -417,6 +607,7 @@ result
 
 
 </div>
+
 
 
 
@@ -467,7 +658,7 @@ borderRadius:"12px"
 
 <p>
 
-时间：
+🕒
 
 {
 
@@ -510,7 +701,6 @@ whiteSpace:"pre-wrap"
 
 
 
-
 <button
 
 onClick={()=>copyText(item.output)}
@@ -525,13 +715,13 @@ onClick={()=>copyText(item.output)}
 
 <button
 
-onClick={()=>deleteItem(item.id)}
-
 style={{
 
 marginLeft:"10px"
 
 }}
+
+onClick={()=>deleteItem(item.id)}
 
 >
 
@@ -556,5 +746,6 @@ marginLeft:"10px"
 </main>
 
 )
+
 
 }
