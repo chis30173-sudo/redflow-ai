@@ -2,41 +2,35 @@
 
 import { useState } from "react";
 
+export default function Home() {
 
-export default function AiTopicPage(){
+  const [mode, setMode] = useState("topic");
 
-const [industry,setIndustry]=useState("");
-const [target,setTarget]=useState("");
-const [platform,setPlatform]=useState("");
+  const [industry,setIndustry] = useState("");
+  const [target,setTarget] = useState("");
+  const [platform,setPlatform] = useState("");
 
-const [result,setResult]=useState("");
-const [loading,setLoading]=useState(false);
-
-
-
-async function generate(){
+  const [result,setResult] = useState("");
 
 
-setLoading(true);
+  async function generate(){
 
-setResult("AI 正在生成爆款内容...");
+    setResult("AI 正在生成...");
 
 
-const res = await fetch("/api/ai",{
+    const res = await fetch("/api/ai",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
 
-method:"POST",
+        prompt:`
 
-headers:{
-"Content-Type":"application/json"
-},
+你是RedFlow AI内容增长专家。
 
-body:JSON.stringify({
-
-prompt:`
-
-你是 RedFlow AI 内容增长专家。
-
-请生成10个爆款内容选题。
+当前功能：
+${mode}
 
 行业：
 ${industry}
@@ -48,41 +42,50 @@ ${target}
 ${platform}
 
 
-每个选题包含：
+请根据以上信息生成内容。
 
-🔥 标题
 
-为什么爆
+如果是topic：
+生成10个爆款选题。
 
-内容结构
+如果是xiaohongshu：
+生成小红书标题、正文、标签。
 
+如果是video：
+生成短视频脚本，包括开头3秒、正文、结尾。
+
+如果是account：
+生成账号定位、简介、内容方向。
+
+
+要求：
+详细、有商业价值。
 
 `
 
-})
-
-});
-
+      })
+    });
 
 
-const data = await res.json();
+    const data = await res.json();
 
 
-setResult(
-data.text || "生成失败"
-);
+    setResult(
+      data.text || 
+      data.result || 
+      "生成失败"
+    );
 
-
-setLoading(false);
-
-
-}
+  }
 
 
 
-return (
+  return (
 
-<div className="page">
+<main style={{
+padding:"40px",
+fontFamily:"Arial"
+}}>
 
 
 <h1>
@@ -90,61 +93,73 @@ return (
 </h1>
 
 
-<p className="desc">
-AI 内容增长助手
+<p>
+AI 爆款内容增长助手
 </p>
 
 
 
-<div className="tools">
+<div style={{
+marginTop:"30px"
+}}>
 
 
-<div className="tool active">
-🔥
-<br/>
-爆款选题
-</div>
+<button onClick={()=>setMode("topic")}>
+🔥 爆款选题
+</button>
 
 
-<div className="tool">
-✍️
-<br/>
-小红书笔记
-</div>
+<button onClick={()=>setMode("xiaohongshu")}>
+✍️ 小红书笔记
+</button>
 
 
-<div className="tool">
-🎬
-<br/>
-短视频脚本
-</div>
+<button onClick={()=>setMode("video")}>
+🎬 短视频脚本
+</button>
 
 
-<div className="tool">
-📈
-<br/>
-账号定位
-</div>
+<button onClick={()=>setMode("account")}>
+📈 账号定位
+</button>
 
 
 </div>
 
 
 
-
-
-<div className="card">
+<hr/>
 
 
 <h2>
-🔥 生成爆款选题
+
+{
+mode==="topic" 
+?"生成爆款选题"
+:
+mode==="xiaohongshu"
+?"生成小红书笔记"
+:
+mode==="video"
+?"生成短视频脚本"
+:
+"生成账号定位"
+}
+
 </h2>
 
 
 
+<p>
+行业
+</p>
+
 <input
 
-placeholder="行业，例如：美妆、电商"
+style={{
+width:"400px",
+padding:"10px"
+}}
 
 value={industry}
 
@@ -155,9 +170,17 @@ e=>setIndustry(e.target.value)
 />
 
 
+
+<p>
+目标用户
+</p>
+
 <input
 
-placeholder="目标用户，例如：18岁女性"
+style={{
+width:"400px",
+padding:"10px"
+}}
 
 value={target}
 
@@ -168,9 +191,17 @@ e=>setTarget(e.target.value)
 />
 
 
+
+<p>
+平台
+</p>
+
 <input
 
-placeholder="平台，例如：小红书"
+style={{
+width:"400px",
+padding:"10px"
+}}
 
 value={platform}
 
@@ -182,209 +213,41 @@ e=>setPlatform(e.target.value)
 
 
 
-<button onClick={generate}>
-
-{
-loading?
-"AI生成中..."
-:
-"🚀 开始生成"
-}
-
-</button>
-
-
-
-</div>
-
-
-
-
-
-{
-result &&
-
-<div className="result">
-
-
-<h2>
-AI结果
-</h2>
+<br/><br/>
 
 
 <button
-onClick={()=>{
-navigator.clipboard.writeText(result)
-alert("复制成功")
+onClick={generate}
+style={{
+padding:"10px 20px"
 }}
 >
-复制内容
+
+🚀 开始生成
+
 </button>
 
 
-<pre>
+
+<pre
+
+style={{
+marginTop:"30px",
+whiteSpace:"pre-wrap",
+background:"#f5f5f5",
+padding:"20px"
+}}
+
+>
+
 {result}
+
 </pre>
 
 
-</div>
 
+</main>
 
-}
-
-
-
-
-<style jsx>{`
-
-
-.page{
-
-min-height:100vh;
-
-background:#f7f8fc;
-
-padding:50px;
-
-font-family:sans-serif;
-
-}
-
-
-
-h1{
-
-font-size:42px;
-
-}
-
-
-
-.desc{
-
-color:#666;
-
-font-size:20px;
-
-}
-
-
-
-.tools{
-
-display:flex;
-
-gap:20px;
-
-margin:30px 0;
-
-}
-
-
-
-.tool{
-
-background:white;
-
-padding:20px;
-
-border-radius:20px;
-
-width:120px;
-
-text-align:center;
-
-box-shadow:0 5px 20px #ddd;
-
-cursor:pointer;
-
-}
-
-
-
-.active{
-
-background:#111;
-
-color:white;
-
-}
-
-
-
-.card,
-.result{
-
-background:white;
-
-padding:30px;
-
-border-radius:20px;
-
-margin-top:30px;
-
-max-width:900px;
-
-}
-
-
-
-input{
-
-width:100%;
-
-padding:15px;
-
-margin:10px 0;
-
-border-radius:10px;
-
-border:1px solid #ddd;
-
-font-size:16px;
-
-}
-
-
-
-button{
-
-padding:12px 25px;
-
-border:none;
-
-border-radius:10px;
-
-background:#111;
-
-color:white;
-
-cursor:pointer;
-
-}
-
-
-
-pre{
-
-white-space:pre-wrap;
-
-line-height:1.8;
-
-margin-top:20px;
-
-}
-
-
-
-`}</style>
-
-
-
-</div>
-
-
-)
-
+  );
 
 }
