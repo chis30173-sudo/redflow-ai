@@ -5,7 +5,9 @@ import { useState } from "react";
 
 export default function Home(){
 
+
 const [mode,setMode]=useState("topic");
+
 
 const [industry,setIndustry]=useState("");
 const [target,setTarget]=useState("");
@@ -15,13 +17,19 @@ const [product,setProduct]=useState("");
 const [style,setStyle]=useState("");
 const [identity,setIdentity]=useState("");
 
+
 const [result,setResult]=useState("");
+
+const [cards,setCards]=useState([]);
 
 
 
 async function generate(){
 
-setResult("🚀 AI 正在分析并生成内容...");
+
+setResult("🚀 AI正在生成...");
+setCards([]);
+
 
 
 const res = await fetch("/api/ai",{
@@ -36,100 +44,44 @@ body:JSON.stringify({
 
 prompt:`
 
-你是 RedFlow AI，
-一个专业的新媒体内容增长专家。
-
+你是RedFlow AI内容增长专家。
 
 当前功能：
-
 ${mode}
 
 
-
 行业：
-
 ${industry}
 
-
 目标用户：
-
 ${target}
 
-
 平台：
-
 ${platform}
 
-
 产品：
-
 ${product}
 
-
 风格：
-
 ${style}
 
-
 个人身份：
-
 ${identity}
 
 
 
-请根据功能输出：
+请严格返回JSON数组：
+
+[
+ {
+ "title":"",
+ "reason":"",
+ "direction":""
+ }
+]
 
 
-
-如果功能是 topic：
-
-生成10个爆款内容选题。
-
-每个包含：
-
-1. 标题
-2. 爆款原因
-3. 内容方向
-
-
-
-如果功能是 xiaohongshu：
-
-生成：
-
-1. 小红书爆款标题
-2. 正文
-3. 5个热门标签
-4. 评论区互动方式
-
-
-
-如果功能是 video：
-
-生成：
-
-1. 前3秒黄金开场
-2. 视频剧情
-3. 口播稿
-4. 结尾转化
-
-
-
-如果功能是 account：
-
-生成：
-
-1. 账号名称
-2. 账号简介
-3. 内容定位
-4. 30天发布计划
-
-
-
-要求：
-
-符合真实商业场景，
-不要泛泛而谈。
+生成5条内容。
 
 
 `
@@ -139,14 +91,40 @@ ${identity}
 });
 
 
-const data=await res.json();
+
+const data = await res.json();
 
 
-setResult(
+
+const text =
 data.text ||
 data.result ||
-"生成失败"
-);
+"";
+
+
+
+try{
+
+
+const json =
+JSON.parse(text);
+
+
+setCards(json);
+
+
+setResult("");
+
+
+}
+
+catch{
+
+
+setResult(text);
+
+
+}
 
 
 }
@@ -155,10 +133,12 @@ data.result ||
 
 return (
 
-<main style={{
+<main
+style={{
 padding:"40px",
 fontFamily:"Arial"
-}}>
+}}
+>
 
 
 <h1>
@@ -167,37 +147,45 @@ fontFamily:"Arial"
 
 
 <p>
-AI 爆款内容增长助手
+AI爆款内容增长助手
 </p>
 
 
-<div style={{
-marginTop:"20px"
-}}>
+
+<div
+style={{
+marginBottom:"30px"
+}}
+>
 
 
 <button onClick={()=>setMode("topic")}>
-🔥 爆款选题
+🔥爆款选题
 </button>
 
 
 <button onClick={()=>setMode("xiaohongshu")}>
-✍️ 小红书笔记
+✍️小红书笔记
 </button>
 
 
 <button onClick={()=>setMode("video")}>
-🎬 短视频脚本
+🎬短视频脚本
 </button>
 
 
 <button onClick={()=>setMode("account")}>
-📈 账号定位
+📈账号定位
 </button>
 
 
 </div>
-{mode==="topic" && (
+
+
+
+
+{
+mode==="topic" &&
 
 <>
 
@@ -209,6 +197,7 @@ marginTop:"20px"
 <p>行业</p>
 
 <input
+
 style={{
 width:"400px",
 padding:"10px"
@@ -220,7 +209,8 @@ onChange={
 e=>setIndustry(e.target.value)
 }
 
-placeholder="例如：美妆、电商、教育"
+placeholder="例如：美妆、电商"
+
 />
 
 
@@ -261,19 +251,20 @@ onChange={
 e=>setPlatform(e.target.value)
 }
 
-placeholder="小红书 / 抖音 / TikTok"
+placeholder="小红书"
 
 />
 
+
 </>
 
-)}
+}
 
 
 
 
-
-{mode==="xiaohongshu" && (
+{
+mode==="xiaohongshu" &&
 
 <>
 
@@ -302,7 +293,6 @@ placeholder="例如：护肤品"
 />
 
 
-
 <p>用户</p>
 
 <input
@@ -318,47 +308,26 @@ onChange={
 e=>setTarget(e.target.value)
 }
 
-placeholder="例如：年轻女性"
-
-/>
-
-
-<p>卖点</p>
-
-<input
-
-style={{
-width:"400px",
-padding:"10px"
-}}
-
-value={industry}
-
-onChange={
-e=>setIndustry(e.target.value)
-}
-
-placeholder="例如：补水、美白"
+placeholder="年轻女性"
 
 />
 
 
 </>
 
-)}
+}
 
 
 
 
-
-{mode==="video" && (
+{
+mode==="video" &&
 
 <>
 
 <h2>
 🎬 短视频脚本生成
 </h2>
-
 
 
 <p>产品</p>
@@ -382,7 +351,6 @@ placeholder="输入产品"
 
 
 
-
 <p>视频风格</p>
 
 <input
@@ -398,20 +366,20 @@ onChange={
 e=>setStyle(e.target.value)
 }
 
-placeholder="剧情 / 搞笑 / 专业"
+placeholder="剧情/搞笑/专业"
 
 />
 
 
 </>
 
-)}
+}
 
 
 
 
-
-{mode==="account" && (
+{
+mode==="account" &&
 
 <>
 
@@ -435,10 +403,9 @@ onChange={
 e=>setIdentity(e.target.value)
 }
 
-placeholder="例如：宝妈、创业者、学生"
+placeholder="创业者/学生/宝妈"
 
 />
-
 
 
 <p>领域</p>
@@ -456,7 +423,7 @@ onChange={
 e=>setIndustry(e.target.value)
 }
 
-placeholder="例如：AI、电商、美妆"
+placeholder="AI/美妆/电商"
 
 />
 
@@ -476,20 +443,20 @@ onChange={
 e=>setTarget(e.target.value)
 }
 
-placeholder="例如：创业人群"
+placeholder="创业人群"
 
 />
 
 
 </>
 
-)}
+}
 
 
 
 
 
-<br/><br/>
+<br/>
 
 
 <button
@@ -509,56 +476,121 @@ fontSize:"16px"
 
 
 
+
 <div
 style={{
-marginTop:"30px"
+marginTop:"40px"
 }}
 >
+
 
 <h2>
 📌 AI生成结果
 </h2>
 
 
+
+
+{
+
+cards.length>0 ?
+
+
+cards.map((item,index)=>(
+
+
 <div
+
+key={index}
+
 style={{
+
 background:"#f7f7f7",
+
 padding:"20px",
-borderRadius:"12px",
-whiteSpace:"pre-wrap",
-lineHeight:"1.8"
+
+borderRadius:"15px",
+
+marginBottom:"20px"
+
 }}
+
 >
 
-{result || "等待生成内容..."}
+
+<h3>
+🔥 爆款选题 #{index+1}
+</h3>
 
 
-</div>
+<p>
+<b>标题：</b>
+{item.title}
+</p>
+
+
+<p>
+<b>爆款原因：</b>
+{item.reason}
+</p>
+
+
+<p>
+<b>内容方向：</b>
+{item.direction}
+</p>
+
 
 
 <button
 
 onClick={()=>{
 
-navigator.clipboard.writeText(result)
+navigator.clipboard.writeText(
 
-alert("复制成功")
+`
+${item.title}
 
-}}
+${item.reason}
 
-style={{
+${item.direction}
 
-marginTop:"15px",
+`
 
-padding:"10px 20px"
+);
+
+alert("复制成功");
 
 }}
 
 >
 
-📋 复制内容
+📋复制
 
 </button>
+
+
+</div>
+
+
+))
+
+
+:
+
+(
+
+<div>
+
+{result || "等待生成内容..."}
+
+</div>
+
+)
+
+
+}
+
 
 
 </div>
@@ -567,7 +599,7 @@ padding:"10px 20px"
 
 </main>
 
-
 );
+
 
 }
