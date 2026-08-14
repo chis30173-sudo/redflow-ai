@@ -1,10 +1,9 @@
-import { supabase } from "../../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 
 export async function POST(req) {
 
   try {
-
 
     const body = await req.json();
 
@@ -23,10 +22,7 @@ export async function POST(req) {
 
 
 
-    // =========================
-    // 1. 爆款选题
-    // =========================
-
+    // 1. 爆款选题生成
     if (mode === "topic") {
 
 
@@ -48,39 +44,28 @@ ${platform}
 每个选题输出：
 
 标题：
-
 爆款原因：
-
 内容方向：
 
 
 要求：
-
-1. 符合小红书爆款逻辑
-2. 有强点击欲望
-3. 适合普通创作者
-4. 有商业价值
-
+符合小红书爆款逻辑，
+有点击欲望，
+适合普通创作者。
 `;
 
     }
 
 
 
-
-    // =========================
     // 2. 爆款图文生成
-    // =========================
-
     else if (mode === "article") {
 
 
       prompt = `
-
 你是一名小红书爆款图文作者。
 
-
-根据下面主题生成一篇高互动笔记：
+根据下面主题生成一篇高互动笔记。
 
 
 主题：
@@ -89,80 +74,49 @@ ${content}
 
 
 
-输出格式：
-
+输出：
 
 标题：
 
 封面文案：
 
-
 正文：
 
-
 第1页：
-
 第2页：
-
 第3页：
-
 第4页：
-
 第5页：
 
-
-
 热门标签：
-
-
-
-要求：
-
-符合小红书用户阅读习惯。
-
-提高收藏、点赞、评论。
-
 `;
 
     }
 
 
 
-
-
-    // =========================
-    // 3. 同行分析
-    // =========================
-
+    // 3. 对标同行分析
     else if (mode === "rewrite") {
 
 
       prompt = `
-
 你是一名内容增长专家。
-
 
 分析下面同行爆款内容：
 
 ${content}
 
 
-
 输出：
-
 
 一、同行爆款原因分析
 
-
 二、用户痛点分析
 
-
-三、原创升级方案
-
+三、原创改写版本
 
 
-生成新的版本：
-
+输出：
 
 新标题：
 
@@ -171,30 +125,20 @@ ${content}
 封面：
 
 标签：
-
-
 `;
 
     }
 
 
 
-
-
-    // =========================
-    // 默认
-    // =========================
-
+    // 默认模式
     else {
 
 
       prompt = `
-
-请生成一篇优质内容。
-
+请生成一篇优质内容：
 
 ${content}
-
 `;
 
     }
@@ -203,72 +147,48 @@ ${content}
 
 
 
-    // =========================
     // 调用 DeepSeek
-    // =========================
-
 
     const response = await fetch(
-
       "https://api.deepseek.com/chat/completions",
-
       {
 
+        method: "POST",
 
-        method:"POST",
+        headers: {
 
-
-        headers:{
-
-
-          "Content-Type":"application/json",
-
+          "Content-Type": "application/json",
 
           "Authorization":
-
           `Bearer ${process.env.DEEPSEEK_API_KEY}`
-
 
         },
 
 
+        body: JSON.stringify({
 
-        body:JSON.stringify({
-
-
-          model:"deepseek-chat",
+          model: "deepseek-chat",
 
 
-
-          messages:[
-
+          messages: [
 
             {
 
+              role: "user",
 
-              role:"user",
-
-
-              content:prompt
-
+              content: prompt
 
             }
-
 
           ],
 
 
-
-          temperature:0.8
-
+          temperature: 0.8
 
         })
 
-
       }
-
     );
-
 
 
 
@@ -279,75 +199,53 @@ ${content}
 
 
 
-
-    if(!response.ok){
+    if (!response.ok) {
 
 
       return Response.json({
 
-        error:data
+        error: data
 
       });
-
 
     }
 
 
 
 
-
-
-    const result =
-
-    data.choices[0].message.content;
+    const aiText = data.choices[0].message.content;
 
 
 
 
-
-
-    // =========================
-    // 保存 Supabase
-    // =========================
+    // ==============================
+    // 保存 AI 生成记录到 Supabase
+    // ==============================
 
 
     const { error } = await supabase
+      .from("generations")
+      .insert({
 
-    .from("generations")
+        type: mode,
 
-    .insert({
-
-
-      type: mode,
-
-
-      input:
-
-      content || industry || "",
+        input:
+        content || industry,
 
 
+        output:
+        aiText
 
-      output:
-
-      result
+      });
 
 
 
-    });
-
-
-
-
-
-    if(error){
+    if (error) {
 
 
       console.log(
-
         "Supabase保存失败:",
-
         error
-
       );
 
 
@@ -359,13 +257,9 @@ ${content}
 
     return Response.json({
 
-
-      text:result
-
+      text: aiText
 
     });
-
-
 
 
 
@@ -374,22 +268,16 @@ ${content}
 
 
 
-
-
-  catch(error){
-
+  catch(error) {
 
 
     return Response.json({
 
-
-      error:error.message
-
+      error: error.message
 
     });
 
 
   }
-
 
 }
