@@ -1,4 +1,3 @@
-import OpenAI from "openai";
 import { NextResponse } from "next/server";
 
 const mock = {
@@ -40,9 +39,37 @@ if (!process.env.DEEPSEEK_API_KEY) {
   });
 }
 
-const client = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY,
-  baseURL: "https://api.deepseek.com/v1"
+const res = await fetch(
+  "https://api.deepseek.com/v1/chat/completions",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: "deepseek-chat",
+      messages: [
+        {
+          role: "system",
+          content: "你是 RedFlow AI 中文内容运营助手。"
+        },
+        {
+          role: "user",
+          content: promptFor(type, body.payload || {})
+        }
+      ]
+    })
+  }
+);
+
+const data = await res.json();
+
+console.log("DEEPSEEK RESPONSE", data);
+
+return NextResponse.json({
+  mode: "live",
+  text: data.choices?.[0]?.message?.content || "无返回"
 });
 
   
