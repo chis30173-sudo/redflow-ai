@@ -1,57 +1,161 @@
-import { NextResponse } from "next/server";
-
-
-export async function POST(request) {
+export async function POST(req) {
 
   try {
 
-    const body = await request.json();
+
+    const body = await req.json();
 
 
-    const apiKey = process.env.DEEPSEEK_API_KEY;
+    const {
+      type,
+      prompt,
+      topic,
+      industry,
+      target,
+      platform
+    } = body;
 
 
-    if (!apiKey) {
 
-      return NextResponse.json({
-        error:"没有找到 DeepSeek Key"
-      });
+    let finalPrompt = "";
+
+
+
+    // ==========================
+    // 模式1：爆款选题
+    // ==========================
+
+    if(type === "topic"){
+
+      finalPrompt = `
+
+你是一名小红书爆款内容策划专家。
+
+请根据以下信息生成10个爆款内容选题：
+
+行业：
+${industry}
+
+目标用户：
+${target}
+
+平台：
+${platform}
+
+
+每个选题包含：
+
+1. 爆款标题
+2. 为什么容易爆
+3. 内容方向
+4. 推荐标签
+
+
+要求：
+符合小红书用户习惯。
+标题要有点击欲望。
+不要生成普通标题。
+
+
+`;
 
     }
 
 
 
-    const prompt = `
+    // ==========================
+    // 模式2：爆款图文
+    // ==========================
 
-你是 RedFlow AI，一名专业的小红书内容增长专家。
 
-请根据：
+    else if(type === "copywriting"){
+
+
+      finalPrompt = `
+
+
+你是一名小红书爆款图文运营专家。
+
+
+请根据下面信息生成一篇爆款笔记：
+
+
+主题：
+
+${topic}
+
 
 行业：
-${body.industry}
+
+${industry}
+
 
 目标用户：
-${body.target}
 
-平台：
-${body.platform}
+${target}
 
 
-生成10个爆款内容选题。
+发布平台：
 
-每个选题包含：
-
-标题
-爆款原因
-内容方向
-封面文案
-关键词
-变现方式
+${platform}
 
 
-只输出中文内容。
+
+请输出：
+
+
+🔥 爆款标题
+
+要求：
+制造好奇、痛点、冲突。
+
+
+✍️ 图文正文
+
+要求：
+包含：
+
+开头3秒吸引用户
+
+正文内容
+
+用户痛点
+
+解决方案
+
+行动引导
+
+
+🎯 爆款原因
+
+
+🏷️ 推荐标签
+
+
+💰 适合变现方式
+
+
+
+语言：
+像真实小红书博主发布。
+
 
 `;
+
+    }
+
+
+
+
+    // 默认模式
+
+    else{
+
+      finalPrompt = prompt;
+
+    }
+
+
 
 
 
@@ -62,11 +166,9 @@ ${body.platform}
         method:"POST",
 
         headers:{
-
           "Content-Type":"application/json",
-
-          "Authorization":`Bearer ${apiKey}`
-
+          "Authorization":
+          `Bearer ${process.env.DEEPSEEK_API_KEY}`
         },
 
 
@@ -78,10 +180,11 @@ ${body.platform}
 
             {
               role:"user",
-              content:prompt
+              content:finalPrompt
             }
 
           ],
+
 
           temperature:0.8
 
@@ -92,17 +195,14 @@ ${body.platform}
 
 
 
+
     const data = await response.json();
-
-
-
-    console.log(data);
 
 
 
     if(!data.choices){
 
-      return NextResponse.json({
+      return Response.json({
 
         error:"DeepSeek返回错误",
 
@@ -114,31 +214,28 @@ ${body.platform}
 
 
 
-    return NextResponse.json({
 
-      text:data.choices[0].message.content
+    return Response.json({
+
+      text:
+      data.choices[0].message.content
 
     });
 
 
 
-  }catch(error){
+
+  } catch(error){
 
 
-    console.log(error);
+    return Response.json({
 
+      error:error.message
 
-    return NextResponse.json({
-
-      error:"AI生成失败",
-
-      detail:error.message
-
-    },{
-      status:500
     });
 
 
   }
+
 
 }
