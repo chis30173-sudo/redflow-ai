@@ -4,10 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "opennextjs-cloudflare build",
-    "start": "next start",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
@@ -16,8 +14,5 @@
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
-  "devDependencies": {
-    "@opennextjs/cloudflare": "1.6.5",
-    "wrangler": "latest"
-  }
+  "devDependencies": {}
 }
