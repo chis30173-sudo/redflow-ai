@@ -2,36 +2,27 @@ export async function POST(req) {
 
   try {
 
-
     const body = await req.json();
 
-
     const {
-      type,
-      prompt,
-      topic,
+      mode,
       industry,
       target,
-      platform
+      platform,
+      content
     } = body;
 
 
-
-    let finalPrompt = "";
-
+    let prompt = "";
 
 
-    // ==========================
-    // 模式1：爆款选题
-    // ==========================
+    // 1. 爆款选题
+    if (mode === "topic") {
 
-    if(type === "topic"){
+      prompt = `
+你是一名小红书爆款内容运营专家。
 
-      finalPrompt = `
-
-你是一名小红书爆款内容策划专家。
-
-请根据以下信息生成10个爆款内容选题：
+请根据下面信息生成10个爆款选题。
 
 行业：
 ${industry}
@@ -43,119 +34,103 @@ ${target}
 ${platform}
 
 
-每个选题包含：
+每个选题输出：
 
-1. 爆款标题
-2. 为什么容易爆
-3. 内容方向
-4. 推荐标签
-
+标题：
+爆款原因：
+内容方向：
 
 要求：
-符合小红书用户习惯。
-标题要有点击欲望。
-不要生成普通标题。
-
-
+符合小红书爆款逻辑，
+有点击欲望，
+适合普通创作者。
 `;
 
     }
 
 
 
-    // ==========================
-    // 模式2：爆款图文
-    // ==========================
+    // 2. 爆款图文生成
+    else if (mode === "article") {
 
 
-    else if(type === "copywriting"){
+      prompt = `
+你是一名小红书爆款图文作者。
 
-
-      finalPrompt = `
-
-
-你是一名小红书爆款图文运营专家。
-
-
-请根据下面信息生成一篇爆款笔记：
-
+根据以下主题生成一篇高互动笔记：
 
 主题：
-
-${topic}
-
-
-行业：
-
-${industry}
+${content}
 
 
-目标用户：
+输出：
 
-${target}
+标题：
+
+封面文案：
+
+正文：
+
+第1页：
+第2页：
+第3页：
+第4页：
+第5页：
 
 
-发布平台：
+热门标签：
+`;
 
-${platform}
+    }
 
+
+
+
+    // 3. 对标同行
+    else if (mode === "rewrite") {
+
+
+      prompt = `
+你是一名内容增长专家。
+
+分析下面同行爆款内容：
+
+${content}
 
 
 请输出：
 
+一、同行爆款原因分析
 
-🔥 爆款标题
+二、用户痛点分析
 
-要求：
-制造好奇、痛点、冲突。
-
-
-✍️ 图文正文
-
-要求：
-包含：
-
-开头3秒吸引用户
-
-正文内容
-
-用户痛点
-
-解决方案
-
-行动引导
+三、重新创作一个原创版本
 
 
-🎯 爆款原因
+输出：
 
+新标题：
 
-🏷️ 推荐标签
+正文：
 
+封面：
 
-💰 适合变现方式
-
-
-
-语言：
-像真实小红书博主发布。
-
-
+标签：
 `;
 
     }
 
 
 
+    else {
 
-    // 默认模式
+      prompt = `
+请生成一篇优质内容。
 
-    else{
-
-      finalPrompt = prompt;
+${content}
+`;
 
     }
-
-
 
 
 
@@ -180,11 +155,10 @@ ${platform}
 
             {
               role:"user",
-              content:finalPrompt
+              content:prompt
             }
 
           ],
-
 
           temperature:0.8
 
@@ -195,23 +169,19 @@ ${platform}
 
 
 
-
     const data = await response.json();
 
 
 
-    if(!data.choices){
+    if(!response.ok){
 
       return Response.json({
 
-        error:"DeepSeek返回错误",
-
-        detail:data
+        error:data
 
       });
 
     }
-
 
 
 
@@ -224,8 +194,9 @@ ${platform}
 
 
 
+  }
 
-  } catch(error){
+  catch(error){
 
 
     return Response.json({
@@ -236,6 +207,5 @@ ${platform}
 
 
   }
-
 
 }
