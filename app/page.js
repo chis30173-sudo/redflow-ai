@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { useState } from "react";
+import Link from "next/link";
 
 
 export default function Home(){
@@ -16,49 +16,7 @@ const [content,setContent]=useState("");
 
 const [result,setResult]=useState("");
 
-const [history,setHistory]=useState([]);
-
 const [loading,setLoading]=useState(false);
-
-
-// 爆款模板库
-
-const templates=[
-
-{
-name:"💄 美妆种草模板",
-text:"请生成一个小红书美妆种草笔记，包含吸引人的标题、痛点开头、产品卖点、使用体验和购买引导。"
-},
-
-{
-name:"🔥 产品测评模板",
-text:"请生成一个真实产品测评内容，需要包含优点、缺点、适合人群、避坑建议。"
-},
-
-{
-name:"⚠️ 避坑分享模板",
-text:"请生成一个小红书避坑类爆款内容，用真实经历分享，引发用户评论互动。"
-},
-
-{
-name:"🛒 电商卖货模板",
-text:"请生成一个高转化销售文案，突出用户痛点、产品价值、购买理由。"
-},
-
-{
-name:"🎬 短视频脚本模板",
-text:"请生成一个30秒短视频脚本，包括前三秒吸引点、内容展开、行动号召。"
-},
-
-{
-name:"📚 知识分享模板",
-text:"请生成一个知识类爆款文章，包含标题、核心观点、案例和互动问题。"
-}
-
-
-];
-
-
 
 
 
@@ -66,20 +24,18 @@ async function generate(){
 
 setLoading(true);
 
-setResult("🚀 AI正在生成，请稍等...");
+setResult("🚀 AI正在生成爆款内容...");
 
 
 try{
 
 
-const res=await fetch("/api/ai",{
+const res = await fetch("/api/ai",{
 
 method:"POST",
 
 headers:{
-
 "Content-Type":"application/json"
-
 },
 
 
@@ -100,21 +56,12 @@ content
 });
 
 
-
-const data=await res.json();
+const data = await res.json();
 
 
 setResult(
-
-data.text ||
-
-"生成失败"
-
+data.text || "生成失败"
 );
-
-
-
-loadHistory();
 
 
 }
@@ -122,9 +69,7 @@ loadHistory();
 catch(error){
 
 setResult(
-
-"请求失败"
-
+"请求失败，请稍后重试"
 );
 
 }
@@ -132,105 +77,22 @@ setResult(
 
 setLoading(false);
 
-}
-
-
-
-
-async function loadHistory(){
-
-
-const {
-
-data
-
-}=await supabase
-
-.from("generations")
-
-.select("*")
-
-.order(
-
-"created_at",
-
-{
-
-ascending:false
 
 }
 
-)
-
-.limit(20);
 
 
+function copyText(){
 
-if(data){
+navigator.clipboard.writeText(result);
 
-setHistory(data);
-
-}
+alert("复制成功");
 
 
 }
 
 
 
-
-
-async function deleteItem(id){
-
-
-await supabase
-
-.from("generations")
-
-.delete()
-
-.eq(
-
-"id",
-
-id
-
-);
-
-
-
-loadHistory();
-
-
-}
-
-
-
-
-function copyText(text){
-
-
-navigator.clipboard.writeText(text);
-
-
-alert(
-
-"复制成功"
-
-);
-
-
-}
-
-
-
-
-useEffect(()=>{
-
-
-loadHistory();
-
-
-},[]);
 return (
 
 <main
@@ -239,83 +101,78 @@ style={{
 
 padding:"40px",
 
-maxWidth:"1000px"
+maxWidth:"1000px",
+
+margin:"auto",
+
+fontFamily:"Arial"
 
 }}
 
 >
 
 
-<h1>
+<h1
+
+style={{
+
+fontSize:"42px"
+
+}}
+
+>
+
 🚀 RedFlow AI
+
 </h1>
 
 
-<p>
+<h2>
+
 AI爆款内容增长助手
+
+</h2>
+
+
+<p>
+
+3秒生成小红书爆款标题、正文、评论区和标签
+
 </p>
 
 
 
-
-<h2>
-🔥 爆款模板库
-</h2>
-
-
-<div
-
-style={{
-
-display:"grid",
-
-gap:"10px"
-
-}}
-
->
-
-
-{
-
-templates.map((item,index)=>(
+<Link href="/templates">
 
 
 <button
 
-key={index}
-
-onClick={()=>{
-
-setContent(item.text);
-
-setMode("article");
-
-}}
-
 style={{
 
-padding:"12px",
+marginTop:"20px",
 
-textAlign:"left"
+padding:"12px 25px",
+
+fontSize:"18px",
+
+background:"#ff2442",
+
+color:"white",
+
+borderRadius:"10px",
+
+border:"none"
 
 }}
 
 >
 
-{item.name}
+🔥 爆款模板库
 
 </button>
 
 
-))
-
-
-}
-
-
-</div>
-
+</Link>
 
 
 
@@ -325,7 +182,7 @@ textAlign:"left"
 
 style={{
 
-margin:"30px 0"
+margin:"40px 0"
 
 }}
 
@@ -335,7 +192,11 @@ margin:"30px 0"
 
 
 
-<div>
+<h2>
+
+选择生成模式
+
+</h2>
 
 
 <button
@@ -352,11 +213,7 @@ onClick={()=>setMode("topic")}
 
 <button
 
-style={{
-
-marginLeft:"10px"
-
-}}
+style={{marginLeft:"10px"}}
 
 onClick={()=>setMode("article")}
 
@@ -370,11 +227,7 @@ onClick={()=>setMode("article")}
 
 <button
 
-style={{
-
-marginLeft:"10px"
-
-}}
+style={{marginLeft:"10px"}}
 
 onClick={()=>setMode("rewrite")}
 
@@ -383,10 +236,6 @@ onClick={()=>setMode("rewrite")}
 🎯 对标同行
 
 </button>
-
-
-</div>
-
 
 
 
@@ -399,72 +248,67 @@ mode==="topic"
 
 &&
 
-<section>
+<div>
 
 
-<h2>
-🔥 爆款选题生成
-</h2>
+<h3>
 
-
-<p>
 行业
-</p>
+
+</h3>
 
 
 <input
 
 value={industry}
 
-onChange={
+onChange={e=>setIndustry(e.target.value)}
 
-e=>setIndustry(e.target.value)
-
-}
+placeholder="例如：美妆、电商、健身"
 
 />
 
 
 
-<p>
+<h3>
+
 目标用户
-</p>
+
+</h3>
 
 
 <input
 
 value={target}
 
-onChange={
+onChange={e=>setTarget(e.target.value)}
 
-e=>setTarget(e.target.value)
-
-}
+placeholder="例如：18-35岁女性"
 
 />
 
 
 
-<p>
+
+<h3>
+
 平台
-</p>
+
+</h3>
 
 
 <input
 
 value={platform}
 
-onChange={
+onChange={e=>setPlatform(e.target.value)}
 
-e=>setPlatform(e.target.value)
-
-}
+placeholder="例如：小红书"
 
 />
 
 
-
-</section>
+</div>
 
 
 }
@@ -475,60 +319,33 @@ e=>setPlatform(e.target.value)
 
 {
 
-(mode==="article" ||
-
-mode==="rewrite")
+(mode==="article" || mode==="rewrite")
 
 &&
 
 
-<section>
-
-
-<h2>
-
-{
-
-mode==="article"
-
-?
-
-"✍️ 爆款图文生成"
-
-:
-
-"🎯 对标同行"
-
-}
-
-
-</h2>
-
-
-
 <textarea
 
-rows="10"
+rows="8"
+
+style={{
+
+width:"100%",
+
+marginTop:"20px"
+
+}}
 
 value={content}
 
-onChange={
+onChange={e=>setContent(e.target.value)}
 
-e=>setContent(e.target.value)
-
-}
-
-placeholder="输入内容或选择上面的模板"
+placeholder="输入你的主题或者同行爆款笔记"
 
 />
 
 
-
-</section>
-
-
 }
-
 
 
 
@@ -540,9 +357,11 @@ onClick={generate}
 
 style={{
 
-marginTop:"20px",
+marginTop:"30px",
 
-fontSize:"16px"
+padding:"15px 30px",
+
+fontSize:"18px"
 
 }}
 
@@ -562,7 +381,7 @@ fontSize:"16px"
 
 style={{
 
-marginTop:"40px"
+marginTop:"50px"
 
 }}
 
@@ -580,11 +399,13 @@ style={{
 
 background:"#f5f5f5",
 
-padding:"20px",
+padding:"25px",
 
-borderRadius:"12px",
+borderRadius:"15px",
 
-whiteSpace:"pre-wrap"
+whiteSpace:"pre-wrap",
+
+lineHeight:"1.8"
 
 }}
 
@@ -612,138 +433,32 @@ result
 
 
 
-
-
-<h2
-
-style={{
-
-marginTop:"50px"
-
-}}
-
->
-
-📚 我的历史生成
-
-</h2>
-
-
-
-
-
 {
 
-history.map(item=>(
-
-
-<div
-
-key={item.id}
-
-style={{
-
-border:"1px solid #ddd",
-
-padding:"20px",
-
-marginBottom:"15px",
-
-borderRadius:"12px"
-
-}}
-
->
-
-
-<p>
-
-🕒
-
-{
-
-new Date(
-
-item.created_at
-
-)
-
-.toLocaleString()
-
-}
-
-</p>
-
-
-<p>
-
-输入：
-
-{item.input}
-
-</p>
-
-
-
-<pre
-
-style={{
-
-whiteSpace:"pre-wrap"
-
-}}
-
->
-
-{item.output}
-
-</pre>
-
-
+result &&
 
 <button
 
-onClick={()=>copyText(item.output)}
-
->
-
-📋复制
-
-</button>
-
-
-
-<button
+onClick={copyText}
 
 style={{
 
-marginLeft:"10px"
+marginTop:"15px"
 
 }}
 
-onClick={()=>deleteItem(item.id)}
-
 >
 
-🗑删除
+📋复制内容
 
 </button>
 
-
-
-</div>
-
-
-))
-
-
 }
-
-
 
 
 
 </main>
+
 
 )
 
