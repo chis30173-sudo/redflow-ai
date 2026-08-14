@@ -509,25 +509,59 @@ fontSize:"16px"
 
 
 
-<pre
+<div
+style={{
+marginTop:"30px"
+}}
+>
+
+<h2>
+📌 AI生成结果
+</h2>
+
+
+<div
+style={{
+background:"#f7f7f7",
+padding:"20px",
+borderRadius:"12px",
+whiteSpace:"pre-wrap",
+lineHeight:"1.8"
+}}
+>
+
+{result || "等待生成内容..."}
+
+
+</div>
+
+
+<button
+
+onClick={()=>{
+
+navigator.clipboard.writeText(result)
+
+alert("复制成功")
+
+}}
 
 style={{
 
-marginTop:"30px",
+marginTop:"15px",
 
-background:"#f5f5f5",
-
-padding:"20px",
-
-whiteSpace:"pre-wrap"
+padding:"10px 20px"
 
 }}
 
 >
 
-{result}
+📋 复制内容
 
-</pre>
+</button>
+
+
+</div>
 
 
 
