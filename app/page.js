@@ -2,85 +2,158 @@
 
 import { useState } from "react";
 
-export default function Home() {
 
-  const [mode, setMode] = useState("topic");
+export default function Home(){
 
-  const [industry,setIndustry] = useState("");
-  const [target,setTarget] = useState("");
-  const [platform,setPlatform] = useState("");
+const [mode,setMode]=useState("topic");
 
-  const [result,setResult] = useState("");
+const [industry,setIndustry]=useState("");
+const [target,setTarget]=useState("");
+const [platform,setPlatform]=useState("");
+
+const [product,setProduct]=useState("");
+const [style,setStyle]=useState("");
+const [identity,setIdentity]=useState("");
+
+const [result,setResult]=useState("");
 
 
-  async function generate(){
 
-    setResult("AI 正在生成...");
+async function generate(){
+
+setResult("🚀 AI 正在分析并生成内容...");
 
 
-    const res = await fetch("/api/ai",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
+const res = await fetch("/api/ai",{
 
-        prompt:`
+method:"POST",
 
-你是RedFlow AI内容增长专家。
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+prompt:`
+
+你是 RedFlow AI，
+一个专业的新媒体内容增长专家。
+
 
 当前功能：
+
 ${mode}
 
+
+
 行业：
+
 ${industry}
 
+
 目标用户：
+
 ${target}
 
+
 平台：
+
 ${platform}
 
 
-请根据以上信息生成内容。
+产品：
+
+${product}
 
 
-如果是topic：
-生成10个爆款选题。
+风格：
 
-如果是xiaohongshu：
-生成小红书标题、正文、标签。
+${style}
 
-如果是video：
-生成短视频脚本，包括开头3秒、正文、结尾。
 
-如果是account：
-生成账号定位、简介、内容方向。
+个人身份：
+
+${identity}
+
+
+
+请根据功能输出：
+
+
+
+如果功能是 topic：
+
+生成10个爆款内容选题。
+
+每个包含：
+
+1. 标题
+2. 爆款原因
+3. 内容方向
+
+
+
+如果功能是 xiaohongshu：
+
+生成：
+
+1. 小红书爆款标题
+2. 正文
+3. 5个热门标签
+4. 评论区互动方式
+
+
+
+如果功能是 video：
+
+生成：
+
+1. 前3秒黄金开场
+2. 视频剧情
+3. 口播稿
+4. 结尾转化
+
+
+
+如果功能是 account：
+
+生成：
+
+1. 账号名称
+2. 账号简介
+3. 内容定位
+4. 30天发布计划
+
 
 
 要求：
-详细、有商业价值。
+
+符合真实商业场景，
+不要泛泛而谈。
+
 
 `
 
-      })
-    });
+})
+
+});
 
 
-    const data = await res.json();
+const data=await res.json();
 
 
-    setResult(
-      data.text || 
-      data.result || 
-      "生成失败"
-    );
-
-  }
+setResult(
+data.text ||
+data.result ||
+"生成失败"
+);
 
 
+}
 
-  return (
+
+
+return (
 
 <main style={{
 padding:"40px",
@@ -98,9 +171,8 @@ AI 爆款内容增长助手
 </p>
 
 
-
 <div style={{
-marginTop:"30px"
+marginTop:"20px"
 }}>
 
 
@@ -125,37 +197,18 @@ marginTop:"30px"
 
 
 </div>
+{mode==="topic" && (
 
-
-
-<hr/>
-
+<>
 
 <h2>
-
-{
-mode==="topic" 
-?"生成爆款选题"
-:
-mode==="xiaohongshu"
-?"生成小红书笔记"
-:
-mode==="video"
-?"生成短视频脚本"
-:
-"生成账号定位"
-}
-
+🔥 爆款选题生成
 </h2>
 
 
-
-<p>
-行业
-</p>
+<p>行业</p>
 
 <input
-
 style={{
 width:"400px",
 padding:"10px"
@@ -167,13 +220,12 @@ onChange={
 e=>setIndustry(e.target.value)
 }
 
+placeholder="例如：美妆、电商、教育"
 />
 
 
 
-<p>
-目标用户
-</p>
+<p>目标用户</p>
 
 <input
 
@@ -188,13 +240,13 @@ onChange={
 e=>setTarget(e.target.value)
 }
 
+placeholder="例如：18-30岁女性"
+
 />
 
 
 
-<p>
-平台
-</p>
+<p>平台</p>
 
 <input
 
@@ -209,7 +261,231 @@ onChange={
 e=>setPlatform(e.target.value)
 }
 
+placeholder="小红书 / 抖音 / TikTok"
+
 />
+
+</>
+
+)}
+
+
+
+
+
+{mode==="xiaohongshu" && (
+
+<>
+
+<h2>
+✍️ 小红书笔记生成
+</h2>
+
+
+<p>产品</p>
+
+<input
+
+style={{
+width:"400px",
+padding:"10px"
+}}
+
+value={product}
+
+onChange={
+e=>setProduct(e.target.value)
+}
+
+placeholder="例如：护肤品"
+
+/>
+
+
+
+<p>用户</p>
+
+<input
+
+style={{
+width:"400px",
+padding:"10px"
+}}
+
+value={target}
+
+onChange={
+e=>setTarget(e.target.value)
+}
+
+placeholder="例如：年轻女性"
+
+/>
+
+
+<p>卖点</p>
+
+<input
+
+style={{
+width:"400px",
+padding:"10px"
+}}
+
+value={industry}
+
+onChange={
+e=>setIndustry(e.target.value)
+}
+
+placeholder="例如：补水、美白"
+
+/>
+
+
+</>
+
+)}
+
+
+
+
+
+{mode==="video" && (
+
+<>
+
+<h2>
+🎬 短视频脚本生成
+</h2>
+
+
+
+<p>产品</p>
+
+<input
+
+style={{
+width:"400px",
+padding:"10px"
+}}
+
+value={product}
+
+onChange={
+e=>setProduct(e.target.value)
+}
+
+placeholder="输入产品"
+
+/>
+
+
+
+
+<p>视频风格</p>
+
+<input
+
+style={{
+width:"400px",
+padding:"10px"
+}}
+
+value={style}
+
+onChange={
+e=>setStyle(e.target.value)
+}
+
+placeholder="剧情 / 搞笑 / 专业"
+
+/>
+
+
+</>
+
+)}
+
+
+
+
+
+{mode==="account" && (
+
+<>
+
+<h2>
+📈 账号定位生成
+</h2>
+
+
+<p>个人身份</p>
+
+<input
+
+style={{
+width:"400px",
+padding:"10px"
+}}
+
+value={identity}
+
+onChange={
+e=>setIdentity(e.target.value)
+}
+
+placeholder="例如：宝妈、创业者、学生"
+
+/>
+
+
+
+<p>领域</p>
+
+<input
+
+style={{
+width:"400px",
+padding:"10px"
+}}
+
+value={industry}
+
+onChange={
+e=>setIndustry(e.target.value)
+}
+
+placeholder="例如：AI、电商、美妆"
+
+/>
+
+
+<p>目标粉丝</p>
+
+<input
+
+style={{
+width:"400px",
+padding:"10px"
+}}
+
+value={target}
+
+onChange={
+e=>setTarget(e.target.value)
+}
+
+placeholder="例如：创业人群"
+
+/>
+
+
+</>
+
+)}
+
+
 
 
 
@@ -217,10 +493,14 @@ e=>setPlatform(e.target.value)
 
 
 <button
+
 onClick={generate}
+
 style={{
-padding:"10px 20px"
+padding:"12px 25px",
+fontSize:"16px"
 }}
+
 >
 
 🚀 开始生成
@@ -232,10 +512,15 @@ padding:"10px 20px"
 <pre
 
 style={{
+
 marginTop:"30px",
-whiteSpace:"pre-wrap",
+
 background:"#f5f5f5",
-padding:"20px"
+
+padding:"20px",
+
+whiteSpace:"pre-wrap"
+
 }}
 
 >
@@ -248,6 +533,7 @@ padding:"20px"
 
 </main>
 
-  );
+
+);
 
 }
