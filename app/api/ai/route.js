@@ -26,9 +26,14 @@ export async function POST(request) {
     const body = await request.json();
 
     console.log(
-      "DeepSeek key exists:",
-      !!process.env.DEEPSEEK_API_KEY
-    );
+  "KEY EXISTS:",
+  !!process.env.DEEPSEEK_API_KEY
+);
+
+const client = new OpenAI({
+  apiKey: process.env.DEEPSEEK_API_KEY,
+  baseURL: "https://api.deepseek.com"
+});
 
     const type = body.type || "ideas";
    if (!process.env.DEEPSEEK_API_KEY) {
@@ -37,7 +42,7 @@ export async function POST(request) {
 
    const client = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY,
-  baseURL: "https://api.deepseek.com/v1"
+  baseURL: "https://api.deepseek.com"
 });
 
 const response = await client.chat.completions.create({
