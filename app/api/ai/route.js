@@ -1,107 +1,171 @@
 import { NextResponse } from "next/server";
 
 const mock = {
-  ideas: `1. 新手最容易踩的 5 个坑\n2. 目标用户最常问却没人讲清楚的问题\n3. 为什么同样做内容，有的人更容易获得咨询？\n4. 不像硬广的产品种草结构\n5. 7 天内容计划：从认知到转化`,
-  generate: `标题候选：\n1. 别再只发成品图了｜真正容易带来咨询的内容结构\n2. 新手做内容，先把这 5 件事讲清楚\n3. 为什么你的内容有人看，却没人行动？\n\n正文：\n先说用户正在经历的具体问题，再给出你的判断，然后用案例、过程或数字证明，最后给一个低门槛的下一步动作。`,
-  optimize: `优化建议：\n- 标题改成“问题 + 结果”型。\n- 前两句话直接点出用户痛点。\n- 每段只表达一个重点。\n- 加入真实案例、过程或数字。\n- CTA 使用收藏、评论或咨询等自然动作。`,
-  advisor: `运营判断：未来 7 天建议按 40% 教程/避坑、40% 案例/结果、20% 观点/品牌分配。每篇记录曝光、收藏、评论和私信，连续两周后再判断有效内容类型。`,
-  breakdown: `拆解结果：\n1. Hook：是否在开头快速命中目标用户。\n2. 痛点：是否具体到真实场景。\n3. 证据：是否有案例、数字或过程。\n4. 信息密度：是否方便快速阅读。\n5. CTA：是否自然承接下一步动作。`
+  ideas: "这里是测试内容：\n1. 新手最容易踩的5个坑\n2. 目标用户常见问题\n3. 行业趋势分析",
+  generate: "这是生成内容测试。",
+  optimize: "这是优化建议测试。",
+  advisor: "这是运营建议测试。",
+  breakdown: "这是拆解结果测试。"
 };
 
+
 function promptFor(type, payload = {}) {
-  const base = "你是 RedFlow AI，一个中文内容运营助手。输出具体、可执行、原创的建议，不承诺流量结果，不复制第三方原文。";
+  const base = "你是 RedFlow AI，一个中文内容运营助手。";
+
   const prompts = {
-    ideas: `${base}\n生成 5 个原创内容选题。行业：${payload.industry || "未填写"}。目标用户：${payload.audience || "未填写"}。每个选题给标题和一句话角度。`,
-    generate: `${base}\n生成一篇原创内容草稿。行业：${payload.industry || "未填写"}。目标用户：${payload.audience || "未填写"}。主题：${payload.topic || "未填写"}。输出 3 个标题、正文、CTA 和标签建议。`,
-    optimize: `${base}\n优化以下草稿，输出诊断、优化标题、优化正文和修改理由：\n${payload.text || ""}`,
-    advisor: `${base}\n作为内容运营顾问回答问题。行业：${payload.industry || "未填写"}。目标用户：${payload.audience || "未填写"}。问题：${payload.question || ""}。输出判断、原因和未来 7 天行动建议。`,
-    breakdown: `${base}\n只分析以下内容的方法和结构，不复刻原文。输出 Hook、结构、信任元素、转化动作和改进点：\n${payload.text || ""}`
+    ideas: `${base}
+请生成5个原创内容选题。
+行业：${payload.industry || "不限"}
+要求：适合短视频、小红书、公众号。`,
+
+    generate: `${base}
+请根据这个主题生成完整内容：
+${payload.topic || "AI工具推荐"}`,
+
+    optimize: `${base}
+请优化以下内容：
+${payload.content || ""}`,
+
+    advisor: `${base}
+请给出运营建议：
+${JSON.stringify(payload)}`,
+
+    breakdown: `${base}
+请拆解这个账号或内容：
+${JSON.stringify(payload)}`
   };
-  return prompts[type] || base;
+
+  return prompts[type] || prompts.ideas;
 }
+
 
 export async function POST(request) {
+
   try {
+
     const body = await request.json();
 
+    const type = body.type || "ideas";
 
-console.log(
-  "KEY EXISTS:",
-  !!process.env.DEEPSEEK_API_KEY
-);
 
-const type = body.type || "ideas";
+    console.log(
+      "KEY EXISTS:",
+      !!process.env.DEEPSEEK_API_KEY
+    );
 
-if (!process.env.DEEPSEEK_API_KEY) {
-  return NextResponse.json({
-    mode: "mock",
-    text: mock[type] || mock.ideas
-  });
-}
 
-const res = await fetch(
-  "https://api.deepseek.com/v1/chat/completions",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: "deepseek-chat",
-      messages: [
-        {
-          role: "system",
-          content: "你是 RedFlow AI 中文内容运营助手。"
-        },
-        {
-          role: "user",
-          content: promptFor(type, body.payload || {})
-        }
-      ]
-    })
-  }
-);
-
-const data = await res.json();
-
-console.log("DEEPSEEK RESPONSE", data);
-
-return NextResponse.json({
-  mode: "live",
-  text: data.choices?.[0]?.message?.content || "无返回"
-});
-
-  
-
-const response = await client.chat.completions.create({
-  model: "deepseek-chat",
-  messages: [
-    {
-      role: "system",
-      content: "你是 RedFlow AI 的中文内容运营助手。"
-    },
-    {
-      role: "user",
-      content: promptFor(type, body.payload || {})
-    }
-  ]
-});
+    if (!process.env.DEEPSEEK_API_KEY) {
 
       return NextResponse.json({
-     mode: "live",
-     text: response.choices[0].message.content || "AI 暂未返回文本。"
-   });
+        mode: "mock",
+        text: mock[type] || mock.ideas
+      });
+
+    }
+
+
+    console.log("CALLING DEEPSEEK");
+
+
+    const response = await fetch(
+      "https://api.deepseek.com/v1/chat/completions",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization":
+            `Bearer ${process.env.DEEPSEEK_API_KEY}`
+        },
+
+
+        body: JSON.stringify({
+
+          model: "deepseek-chat",
+
+          messages: [
+
+            {
+              role: "system",
+              content:
+                "你是 RedFlow AI 中文内容运营助手。"
+            },
+
+            {
+              role: "user",
+              content:
+                promptFor(
+                  type,
+                  body.payload || {}
+                )
+            }
+
+          ],
+
+          temperature: 0.7
+
+        })
+
+      }
+    );
+
+
+    const data = await response.json();
+
+
+    console.log(
+      "DEEPSEEK RESULT:",
+      JSON.stringify(data)
+    );
+
+
+    if (!response.ok) {
+
+      return NextResponse.json({
+
+        mode: "error",
+
+        error: data
+
+      }, {
+        status: 500
+      });
+
+    }
+
+
+    return NextResponse.json({
+
+      mode: "live",
+
+      text:
+        data.choices?.[0]?.message?.content ||
+        "DeepSeek 没有返回内容"
+
+    });
+
 
   } catch (error) {
- console.error("DeepSeek Error:", error);
 
- return NextResponse.json({
-   error: error?.message || "unknown error",
-   stack: error?.stack || "",
-   response: error?.response?.data || null
- }, {
-   status:500
- });
-}
+
+    console.log(
+      "SERVER ERROR:",
+      error
+    );
+
+
+    return NextResponse.json({
+
+      mode: "error",
+
+      error:
+        error.message
+
+    }, {
+      status:500
+    });
+
+
+  }
+
 }
