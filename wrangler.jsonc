@@ -4,8 +4,5 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "assets": {
-    "directory": ".open-next/assets"
-  },
-  "main": ".open-next/worker.js"
+  "pages_build_output_dir": ".open-next"
 }
