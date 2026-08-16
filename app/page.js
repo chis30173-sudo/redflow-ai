@@ -1,43 +1,51 @@
 "use client"
 
 import { useState } from "react"
+
 import FeatureCard from "./components/FeatureCard"
 import ResultCard from "./components/ResultCard"
 
 
 export default function Home(){
 
-  const [mode,setMode]=useState("blue")
-  const [input,setInput]=useState("")
-  const [result,setResult]=useState("")
-  const [loading,setLoading]=useState(false)
+
+  const [mode,setMode] = useState("batch")
+
+  const [input,setInput] = useState("")
+
+  const [result,setResult] = useState(null)
+
+  const [loading,setLoading] = useState(false)
 
 
 
-  const features=[
+  const features = [
+
+    {
+      id:"batch",
+      title:"🔥 生成100条爆款",
+      desc:"批量生成小红书爆款内容"
+    },
+
 
     {
       id:"blue",
-      title:"🔥 蓝海商品发现",
-      desc:"寻找值得进入的新机会"
+      title:"🌊 蓝海选品",
+      desc:"寻找低竞争高利润机会"
     },
 
-    {
-      id:"content",
-      title:"✍️ 爆款内容工厂",
-      desc:"快速生成小红书内容"
-    },
 
     {
       id:"analyze",
-      title:"📊 爆款拆解",
-      desc:"分析热门产品逻辑"
+      title:"📊 爆款对标",
+      desc:"分析竞品和市场打法"
     },
+
 
     {
       id:"ip",
-      title:"🚀 个人IP打造",
-      desc:"规划账号成长路线"
+      title:"👤 个人IP打造",
+      desc:"规划赚钱型个人账号"
     }
 
   ]
@@ -46,33 +54,43 @@ export default function Home(){
 
   async function generate(){
 
+
     if(!input){
-      alert("请输入内容")
+
+      alert("请输入产品或方向")
+
       return
+
     }
 
 
+
     setLoading(true)
-    setResult("")
+
+    setResult(null)
+
 
 
     try{
 
 
-      const res=await fetch(
+      const res = await fetch(
         "/api/generate",
         {
 
           method:"POST",
 
           headers:{
+
             "Content-Type":"application/json"
+
           },
 
 
           body:JSON.stringify({
 
             mode,
+
             input
 
           })
@@ -81,29 +99,37 @@ export default function Home(){
       )
 
 
-      const data=await res.json()
+
+      const data = await res.json()
+
+
+
+      setResult(data.result || data.error)
+
+
+
+    }catch(error){
 
 
       setResult(
-        data.result || data.error
+        "生成失败："+error.message
       )
 
-
-    }catch(e){
-
-      setResult(e.message)
 
     }
 
 
+
     setLoading(false)
+
 
   }
 
 
 
 
-  return(
+
+  return (
 
     <main
 
@@ -111,11 +137,11 @@ export default function Home(){
 
         minHeight:"100vh",
 
-        background:"#0f172a",
+        background:"#020617",
 
-        color:"#fff",
+        padding:"40px",
 
-        padding:"40px"
+        color:"#fff"
 
       }}
 
@@ -126,7 +152,7 @@ export default function Home(){
 
         style={{
 
-          maxWidth:"1000px",
+          maxWidth:"1100px",
 
           margin:"auto"
 
@@ -141,15 +167,16 @@ export default function Home(){
 
             textAlign:"center",
 
-            fontSize:"45px"
+            fontSize:"40px"
 
           }}
 
         >
 
-          🚀 RedFlow AI
+          🔥 RedFlow AI
 
         </h1>
+
 
 
         <p
@@ -158,15 +185,18 @@ export default function Home(){
 
             textAlign:"center",
 
-            fontSize:"22px"
+            color:"#94a3b8",
+
+            fontSize:"18px"
 
           }}
 
         >
 
-          小红书潮玩电商增长智能助手
+          小红书卖家 · 潮玩商家 · 个人IP增长助手
 
         </p>
+
 
 
 
@@ -177,7 +207,8 @@ export default function Home(){
 
             display:"grid",
 
-            gridTemplateColumns:"repeat(2,1fr)",
+            gridTemplateColumns:
+            "repeat(auto-fit,minmax(220px,1fr))",
 
             gap:"20px",
 
@@ -187,23 +218,39 @@ export default function Home(){
 
         >
 
+
         {
 
           features.map(item=>(
 
-            <FeatureCard
+
+            <div
 
               key={item.id}
 
-              title={item.title}
-
-              desc={item.desc}
-
-              active={mode===item.id}
-
               onClick={()=>setMode(item.id)}
 
-            />
+              style={{
+
+                cursor:"pointer"
+
+              }}
+
+            >
+
+              <FeatureCard
+
+                title={item.title}
+
+                desc={item.desc}
+
+                active={mode===item.id}
+
+              />
+
+
+            </div>
+
 
           ))
 
@@ -211,6 +258,7 @@ export default function Home(){
 
 
         </div>
+
 
 
 
@@ -233,16 +281,29 @@ export default function Home(){
         >
 
 
+
+          <h2>
+
+            当前模式：
+
+            {mode}
+
+          </h2>
+
+
+
           <textarea
 
+
             value={input}
+
 
             onChange={
               e=>setInput(e.target.value)
             }
 
 
-            placeholder="例如：潮玩娃衣、Labubu周边、小红书账号定位"
+            placeholder="例如：Labubu娃衣、潮玩盲盒、明星周边"
 
 
             style={{
@@ -259,11 +320,14 @@ export default function Home(){
 
             }}
 
+
           />
 
 
 
+
           <button
+
 
             onClick={generate}
 
@@ -288,25 +352,43 @@ export default function Home(){
 
             }}
 
+
           >
 
+
           {
+
             loading
+
             ?
+
             "AI分析中..."
+
             :
+
             "🔥 开始生成"
+
           }
 
 
           </button>
 
 
+
         </div>
 
 
 
-        <ResultCard result={result}/>
+
+
+        {
+
+          result &&
+
+          <ResultCard result={result}/>
+
+        }
+
 
 
       </div>
@@ -315,5 +397,6 @@ export default function Home(){
     </main>
 
   )
+
 
 }
