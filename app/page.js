@@ -1,310 +1,148 @@
-"use client";
-
-import { useState } from "react";
-
 export default function Home() {
+  return (
+    <main style={{
+      minHeight: "100vh",
+      background: "#0f172a",
+      color: "white",
+      padding: "40px"
+    }}>
 
-  const [product,setProduct] = useState("");
-
-  const templates=[
-    {
-      icon:"🔥",
-      name:"美妆爆款模板",
-      desc:"生成小红书种草、短视频脚本",
-      users:"18-35岁女性"
-    },
-    {
-      icon:"🧸",
-      name:"潮玩明星联名模板",
-      desc:"玩偶、IP周边、收藏品爆款营销",
-      users:"年轻潮玩用户"
-    },
-    {
-      icon:"🛒",
-      name:"电商带货模板",
-      desc:"商品标题、卖点、销售话术",
-      users:"购物用户"
-    },
-    {
-      icon:"⭐",
-      name:"个人IP模板",
-      desc:"打造个人品牌爆款内容",
-      users:"粉丝用户"
-    }
-  ];
+      <section style={{
+        maxWidth: "900px",
+        margin: "auto",
+        textAlign: "center"
+      }}>
+
+        <h1 style={{
+          fontSize:"48px",
+          fontWeight:"800"
+        }}>
+          🚀 RedFlow AI
+        </h1>
 
 
-return (
+        <p style={{
+          fontSize:"22px",
+          marginTop:"20px",
+          color:"#cbd5e1"
+        }}>
+          AI爆款内容生成平台
+        </p>
 
-<main
-style={{
-fontFamily:"Arial",
-padding:"40px",
-maxWidth:"1100px",
-margin:"auto"
-}}
->
 
+        <div style={{
+          background:"#1e293b",
+          padding:"30px",
+          borderRadius:"20px",
+          marginTop:"50px"
+        }}>
 
-<section
-style={{
-textAlign:"center",
-padding:"60px 20px"
-}}
->
+          <h2>
+            输入你的产品
+          </h2>
 
-<h1
-style={{
-fontSize:"48px"
-}}
->
-🔥 RedFlow AI
-</h1>
 
+          <input
+          placeholder="例如：Labubu 毛绒玩偶"
+          style={{
+            width:"80%",
+            padding:"15px",
+            marginTop:"20px",
+            borderRadius:"10px",
+            border:"none",
+            fontSize:"18px"
+          }}
+          />
 
-<h2>
-AI爆款内容生成平台
-</h2>
 
+          <br/>
 
-<p
-style={{
-fontSize:"20px",
-color:"#666"
-}}
->
-30秒生成小红书、抖音、电商爆款内容
-</p>
 
+          <button
+          style={{
+            marginTop:"25px",
+            padding:"15px 40px",
+            background:"#ff3366",
+            color:"white",
+            border:"none",
+            borderRadius:"30px",
+            fontSize:"18px",
+            cursor:"pointer"
+          }}
+          >
+          🔥 立即生成爆款内容
+          </button>
 
-<div
-style={{
-marginTop:"30px"
-}}
->
 
-<input
+        </div>
 
-value={product}
 
-onChange={(e)=>setProduct(e.target.value)}
 
-placeholder="输入你的产品，例如：明星联名玩偶"
+        <div style={{
+          display:"grid",
+          gridTemplateColumns:"repeat(3,1fr)",
+          gap:"20px",
+          marginTop:"50px"
+        }}>
 
-style={{
-width:"350px",
-padding:"15px",
-borderRadius:"10px",
-border:"1px solid #ddd"
-}}
 
-/>
+          <Card 
+          title="小红书爆款"
+          text="标题+正文+标签"
+          />
 
 
-<button
+          <Card
+          title="TikTok脚本"
+          text="短视频带货脚本"
+          />
 
-style={{
-marginLeft:"10px",
-padding:"15px 25px",
-borderRadius:"10px",
-background:"#111",
-color:"#fff",
-cursor:"pointer"
-}}
 
->
+          <Card
+          title="电商文案"
+          text="商品卖点生成"
+          />
 
-免费生成
 
-</button>
+        </div>
 
 
-</div>
+        <p style={{
+          marginTop:"60px",
+          color:"#94a3b8"
+        }}>
+          免费体验 · AI驱动 · 商业增长工具
+        </p>
 
 
-</section>
+      </section>
 
 
-
-
-
-<section>
-
-<h2>
-🔥 热门爆款模板
-</h2>
-
-
-<div
-
-style={{
-display:"grid",
-gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))",
-gap:"20px"
-}}
-
->
-
-
-{
-templates.map((item,index)=>(
-
-<div
-
-key={index}
-
-style={{
-
-border:"1px solid #eee",
-
-borderRadius:"16px",
-
-padding:"25px",
-
-boxShadow:"0 5px 20px #eee"
-
-}}
-
->
-
-
-<h2>
-
-{item.icon} {item.name}
-
-</h2>
-
-
-<p>
-{item.desc}
-</p>
-
-
-<p>
-目标用户：
-{item.users}
-</p>
-
-
-<button
-
-style={{
-padding:"10px 20px",
-borderRadius:"8px",
-border:"none",
-background:"#ff5a5f",
-color:"white"
-}}
-
->
-
-立即体验
-
-</button>
-
-
-</div>
-
-))
-
+    </main>
+  )
 }
 
 
-</div>
 
+function Card({title,text}){
 
-</section>
+return (
 
+<div style={{
+background:"#1e293b",
+padding:"25px",
+borderRadius:"15px"
+}}>
 
-
-
-
-<section
-
-style={{
-marginTop:"70px"
-}}
-
->
-
-
-<h2>
-为什么选择 RedFlow AI
-</h2>
-
-
-<ul
-
-style={{
-fontSize:"18px",
-lineHeight:"2"
-}}
-
->
-
-<li>✅ AI自动生成爆款文案</li>
-
-<li>✅ 行业模板快速复制</li>
-
-<li>✅ 支持电商、潮玩、个人IP</li>
-
-<li>✅ 持续更新热门市场趋势</li>
-
-
-</ul>
-
-
-</section>
-
-
-
-<section
-
-style={{
-marginTop:"60px",
-background:"#111",
-color:"white",
-padding:"40px",
-borderRadius:"20px",
-textAlign:"center"
-}}
-
->
-
-
-<h2>
-开始打造你的爆款内容
-</h2>
-
+<h3>
+{title}
+</h3>
 
 <p>
-免费体验，无需等待
+{text}
 </p>
 
-
-<button
-
-style={{
-padding:"15px 40px",
-borderRadius:"10px",
-background:"#fff",
-color:"#111",
-border:"none"
-}}
-
->
-
-立即开始
-
-</button>
-
-
-</section>
-
-
-
-</main>
-
+</div>
 
 )
 
