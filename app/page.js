@@ -2,228 +2,285 @@
 
 import { useState } from "react"
 
-export default function Home(){
+export default function Home() {
 
-const [mode,setMode]=useState("product")
-const [input,setInput]=useState("")
-const [result,setResult]=useState("")
-const [loading,setLoading]=useState(false)
+  const [mode, setMode] = useState("blue")
+  const [input, setInput] = useState("")
+  const [result, setResult] = useState("")
+  const [loading, setLoading] = useState(false)
 
 
-async function generate(){
+  const modes = [
+    {
+      id: "blue",
+      title: "🔥 蓝海商品发现",
+      desc: "找到值得卖的产品机会"
+    },
+    {
+      id: "content",
+      title: "✍️ 爆款内容工厂",
+      desc: "生成小红书爆款图文"
+    },
+    {
+      id: "analyze",
+      title: "📊 爆款笔记拆解",
+      desc: "分析别人为什么爆"
+    },
+    {
+      id: "ip",
+      title: "🚀 个人IP打造",
+      desc: "规划账号成长路线"
+    }
+  ]
 
-if(!input){
-alert("请输入内容")
-return
-}
 
-setLoading(true)
-setResult("")
+  async function generate() {
 
+    if (!input) {
+      alert("请输入内容")
+      return
+    }
 
-try{
 
-const res=await fetch("/api/generate",{
+    setLoading(true)
+    setResult("")
 
-method:"POST",
 
-headers:{
-"Content-Type":"application/json"
-},
+    try {
 
-body:JSON.stringify({
+      const res = await fetch("/api/generate", {
 
-mode,
-input
+        method: "POST",
 
-})
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-})
+        body: JSON.stringify({
+          mode,
+          input
+        })
 
+      })
 
-const data=await res.json()
 
-setResult(data.result || data.error)
+      const data = await res.json()
 
+      setResult(
+        data.result || data.error
+      )
 
-}catch(e){
 
-setResult(e.message)
+    } catch(error) {
 
-}
+      setResult(error.message)
 
+    }
 
-setLoading(false)
 
-}
+    setLoading(false)
 
+  }
 
 
-return (
 
-<main
-style={{
-minHeight:"100vh",
-background:"#0f172a",
-color:"white",
-padding:"40px"
-}}
->
+  return (
 
+    <main
+      style={{
+        minHeight:"100vh",
+        background:"#0f172a",
+        color:"#fff",
+        padding:"40px"
+      }}
+    >
 
-<div
-style={{
-maxWidth:"900px",
-margin:"auto",
-textAlign:"center"
-}}
->
+      <div
+        style={{
+          maxWidth:"1000px",
+          margin:"auto"
+        }}
+      >
 
 
-<h1
-style={{
-fontSize:"48px"
-}}
->
-🚀 RedFlow AI
-</h1>
+        <h1
+          style={{
+            fontSize:"48px",
+            textAlign:"center"
+          }}
+        >
+          🚀 RedFlow AI
+        </h1>
 
 
-<p
-style={{
-fontSize:"22px"
-}}
->
-小红书商业增长AI助手
-</p>
+        <p
+          style={{
+            textAlign:"center",
+            fontSize:"22px"
+          }}
+        >
+          小红书商业增长智能助手
+        </p>
 
 
 
-<div
-style={{
-display:"grid",
-gridTemplateColumns:"repeat(2,1fr)",
-gap:"20px",
-marginTop:"40px"
-}}
->
+        <div
+          style={{
+            display:"grid",
+            gridTemplateColumns:"repeat(2,1fr)",
+            gap:"20px",
+            marginTop:"40px"
+          }}
+        >
 
+        {
+          modes.map(item=>(
 
-<button onClick={()=>setMode("blue")}>
-🔥 蓝海商品发现
-</button>
+            <button
 
+              key={item.id}
 
-<button onClick={()=>setMode("content")}>
-✍️ 爆款内容工厂
-</button>
+              onClick={()=>setMode(item.id)}
 
+              style={{
 
-<button onClick={()=>setMode("analyze")}>
-📊 爆款笔记拆解
-</button>
+                padding:"25px",
 
+                borderRadius:"16px",
 
-<button onClick={()=>setMode("ip")}>
-🚀 个人IP打造
-</button>
+                background:
+                mode===item.id
+                ?
+                "#ec4899"
+                :
+                "#1e293b",
 
+                color:"white",
 
-</div>
+                cursor:"pointer"
 
+              }}
 
+            >
 
-<div
-style={{
-marginTop:"40px",
-background:"#1e293b",
-padding:"30px",
-borderRadius:"20px"
-}}
->
+              <h2>{item.title}</h2>
 
+              <p>{item.desc}</p>
 
-<textarea
 
-placeholder="输入你的产品、行业、账号情况..."
+            </button>
 
-value={input}
+          ))
+        }
 
-onChange={(e)=>setInput(e.target.value)}
 
-style={{
+        </div>
 
-width:"90%",
-height:"120px",
-padding:"15px",
-fontSize:"18px"
 
-}}
 
-/>
+        <div
+          style={{
+            marginTop:"40px",
+            background:"#1e293b",
+            padding:"30px",
+            borderRadius:"20px"
+          }}
+        >
 
+          <textarea
 
-<br/>
+            placeholder="输入产品、行业、账号情况，例如：潮玩娃衣，小红书卖货"
 
+            value={input}
 
-<button
+            onChange={
+              e=>setInput(e.target.value)
+            }
 
-onClick={generate}
+            style={{
+              width:"100%",
+              height:"120px",
+              padding:"15px",
+              fontSize:"18px",
+              borderRadius:"10px"
+            }}
 
-style={{
+          />
 
-marginTop:"20px",
-padding:"15px 40px",
-background:"#ff3366",
-color:"white",
-borderRadius:"30px"
 
-}}
+          <button
 
->
+            onClick={generate}
 
-{
-loading
-?
-"AI分析中..."
-:
-"🔥开始生成"
-}
+            style={{
 
-</button>
+              marginTop:"20px",
 
+              padding:"15px 40px",
 
-</div>
+              borderRadius:"30px",
 
+              background:"#f43f5e",
 
+              color:"white",
 
+              fontSize:"18px",
 
-{
-result &&
+              cursor:"pointer"
 
-<div
-style={{
-marginTop:"40px",
-background:"#1e293b",
-padding:"30px",
-borderRadius:"20px",
-textAlign:"left",
-whiteSpace:"pre-wrap"
-}}
->
+            }}
 
-{result}
+          >
 
-</div>
+          {
+            loading
+            ?
+            "AI分析中..."
+            :
+            "🔥 开始生成"
+          }
 
-}
 
+          </button>
 
 
-</div>
+        </div>
 
-</main>
 
-)
+
+
+        {
+          result &&
+
+          <div
+
+            style={{
+
+              marginTop:"40px",
+
+              background:"#1e293b",
+
+              padding:"30px",
+
+              borderRadius:"20px",
+
+              whiteSpace:"pre-wrap"
+
+            }}
+
+          >
+
+            {result}
+
+          </div>
+
+        }
+
+
+      </div>
+
+    </main>
+
+  )
 
 }
