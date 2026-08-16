@@ -14,7 +14,7 @@ export default function Home(){
   async function generate(){
 
     if(!product){
-      alert("请输入商品")
+      setError("请输入商品")
       return
     }
 
@@ -53,12 +53,27 @@ export default function Home(){
       }
 
 
-      // DeepSeek 返回的是 JSON 字符串
-      const jsonResult = JSON.parse(data.result)
+      let jsonResult
+
+
+      try{
+
+        jsonResult = JSON.parse(data.result)
+
+      }catch{
+
+        jsonResult = {
+          title:"AI生成结果",
+          content:data.result,
+          tiktok:"",
+          selling_points:"",
+          tags:""
+        }
+
+      }
 
 
       setResult(jsonResult)
-
 
 
     }catch(err){
@@ -144,7 +159,6 @@ export default function Home(){
           />
 
 
-
           <br/>
 
 
@@ -169,7 +183,7 @@ export default function Home(){
           {
             loading
             ?
-            "AI生成中..."
+            "🔥AI生成中..."
             :
             "🔥立即生成爆款内容"
           }
@@ -183,16 +197,17 @@ export default function Home(){
 
 
 
-
         {
           error &&
 
           <div
           style={{
+
             marginTop:"30px",
             background:"#7f1d1d",
             padding:"20px",
             borderRadius:"15px"
+
           }}
           >
 
@@ -201,7 +216,6 @@ export default function Home(){
           </div>
 
         }
-
 
 
 
@@ -229,9 +243,7 @@ export default function Home(){
           </h2>
 
 
-
           <hr/>
-
 
 
           <h3>
@@ -242,7 +254,6 @@ export default function Home(){
           <p>
           {result.content}
           </p>
-
 
 
 
@@ -257,8 +268,6 @@ export default function Home(){
 
 
 
-
-
           <h3>
           💡 商品卖点
           </h3>
@@ -267,8 +276,6 @@ export default function Home(){
           <p>
           {result.selling_points}
           </p>
-
-
 
 
 
@@ -285,7 +292,6 @@ export default function Home(){
 
           </div>
 
-
         }
 
 
@@ -296,6 +302,5 @@ export default function Home(){
     </main>
 
   )
-
 
 }
