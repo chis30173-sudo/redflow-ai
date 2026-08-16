@@ -4,6 +4,8 @@ import { useState } from "react"
 
 import FeatureCard from "./components/FeatureCard"
 import ResultCard from "./components/ResultCard"
+import ScoreCard from "./components/ScoreCard"
+
 
 
 export default function Home(){
@@ -19,7 +21,8 @@ export default function Home(){
 
 
 
-  const features = [
+  const features=[
+
 
     {
       id:"batch",
@@ -38,7 +41,7 @@ export default function Home(){
     {
       id:"analyze",
       title:"📊 爆款对标",
-      desc:"分析竞品和市场打法"
+      desc:"分析竞品市场打法"
     },
 
 
@@ -48,7 +51,10 @@ export default function Home(){
       desc:"规划赚钱型个人账号"
     }
 
+
   ]
+
+
 
 
 
@@ -74,29 +80,31 @@ export default function Home(){
     try{
 
 
-      const res = await fetch(
-        "/api/generate",
-        {
-
-          method:"POST",
-
-          headers:{
-
-            "Content-Type":"application/json"
-
-          },
+      const res = await fetch("/api/generate",{
 
 
-          body:JSON.stringify({
+        method:"POST",
 
-            mode,
 
-            input
+        headers:{
 
-          })
 
-        }
-      )
+          "Content-Type":"application/json"
+
+
+        },
+
+
+        body:JSON.stringify({
+
+          mode,
+
+          input
+
+        })
+
+
+      })
 
 
 
@@ -104,16 +112,35 @@ export default function Home(){
 
 
 
-      setResult(data.result || data.error)
+      setResult(data.result || data)
 
 
 
-    }catch(error){
+    }
 
 
-      setResult(
-        "生成失败："+error.message
-      )
+    catch(error){
+
+
+      setResult({
+
+        title:"错误",
+
+        content:error.message,
+
+        tags:"",
+
+        score:{
+
+          blue:0,
+
+          hot:0,
+
+          profit:0
+
+        }
+
+      })
 
 
     }
@@ -124,6 +151,7 @@ export default function Home(){
 
 
   }
+
 
 
 
@@ -179,15 +207,14 @@ export default function Home(){
 
 
 
+
         <p
 
           style={{
 
             textAlign:"center",
 
-            color:"#94a3b8",
-
-            fontSize:"18px"
+            color:"#94a3b8"
 
           }}
 
@@ -238,13 +265,12 @@ export default function Home(){
 
             >
 
+
               <FeatureCard
 
                 title={item.title}
 
                 desc={item.desc}
-
-                active={mode===item.id}
 
               />
 
@@ -284,11 +310,12 @@ export default function Home(){
 
           <h2>
 
-            当前模式：
+          当前模式：
 
-            {mode}
+          {mode}
 
           </h2>
+
 
 
 
@@ -298,9 +325,7 @@ export default function Home(){
             value={input}
 
 
-            onChange={
-              e=>setInput(e.target.value)
-            }
+            onChange={(e)=>setInput(e.target.value)}
 
 
             placeholder="例如：Labubu娃衣、潮玩盲盒、明星周边"
@@ -310,7 +335,7 @@ export default function Home(){
 
               width:"100%",
 
-              height:"130px",
+              height:"120px",
 
               padding:"15px",
 
@@ -322,6 +347,7 @@ export default function Home(){
 
 
           />
+
 
 
 
@@ -340,11 +366,11 @@ export default function Home(){
 
               borderRadius:"30px",
 
+              border:"none",
+
               background:"#ec4899",
 
               color:"#fff",
-
-              border:"none",
 
               cursor:"pointer",
 
@@ -374,8 +400,8 @@ export default function Home(){
           </button>
 
 
-
         </div>
+
 
 
 
@@ -391,10 +417,22 @@ export default function Home(){
 
 
 
+        {
+
+          result?.score &&
+
+          <ScoreCard score={result.score}/>
+
+        }
+
+
+
+
       </div>
 
 
     </main>
+
 
   )
 
