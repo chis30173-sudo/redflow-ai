@@ -27,41 +27,57 @@ export async function POST(request) {
 
 
 
-    // =========================
+    // =====================
     // 100条爆款生成
-    // =========================
+    // =====================
 
     if(mode === "batch"){
 
 
       prompt = `
 
-你是一名小红书爆款操盘专家。
+你是一名小红书爆款商业操盘专家。
 
-
-用户产品：
+产品：
 
 ${input}
 
 
-生成100条爆款内容方案。
+请生成爆款内容方案。
 
+
+返回JSON格式：
+
+{
+"plans":[
+{
+"title":"",
+"content":"",
+"tags":[],
+"score":{
+"blue":80,
+"hot":80,
+"profit":80
+}
+}
+]
+}
+
+
+要求：
+
+生成10条高质量方案。
 
 每条包含：
 
 1. 爆款标题
-
-2. 内容方向
-
+2. 小红书文案
 3. 用户痛点
-
 4. 商品卖点
-
 5. 热门标签
-
-6. 蓝海指数
-
-7. 利润指数
+6. 蓝海评分
+7. 热度评分
+8. 利润评分
 
 
 目标：
@@ -70,78 +86,6 @@ ${input}
 潮玩商家
 娃衣商家
 明星周边商家
-
-
-必须返回JSON格式。
-
-格式：
-
-{
-"title":"",
-"content":"",
-"tags":"",
-"score":{
-"blue":0,
-"hot":0,
-"profit":0
-}
-}
-
-
-不要输出解释文字。
-
-`
-
-    }
-
-
-
-    // =========================
-    // 爆款对标分析
-    // =========================
-
-    else if(mode === "analyze"){
-
-
-      prompt = `
-
-你是一名小红书商业分析专家。
-
-
-分析产品：
-
-${input}
-
-
-输出：
-
-市场热度
-
-竞争程度
-
-用户画像
-
-爆款内容方向
-
-同类账号打法
-
-可复制机会
-
-蓝海建议
-
-
-必须返回JSON格式：
-
-{
-"title":"",
-"content":"",
-"tags":"",
-"score":{
-"blue":0,
-"hot":0,
-"profit":0
-}
-}
 
 
 不要输出解释。
@@ -154,9 +98,69 @@ ${input}
 
 
 
-    // =========================
-    // 个人IP打造
-    // =========================
+    // =====================
+    // 爆款分析
+    // =====================
+
+    else if(mode === "analyze"){
+
+
+      prompt = `
+
+你是一名小红书市场分析专家。
+
+
+产品：
+
+${input}
+
+
+返回JSON：
+
+{
+"plans":[
+{
+"title":"",
+"content":"",
+"tags":[],
+"score":{
+"blue":80,
+"hot":80,
+"profit":80
+}
+}
+]
+}
+
+
+分析：
+
+市场热度
+
+竞争程度
+
+用户画像
+
+爆款打法
+
+竞品机会
+
+蓝海方向
+
+
+不要输出解释。
+
+`
+
+    }
+
+
+
+
+
+    // =====================
+    // 个人IP
+    // =====================
 
     else if(mode === "ip"){
 
@@ -166,12 +170,30 @@ ${input}
 你是一名个人IP商业顾问。
 
 
-用户方向：
+方向：
 
 ${input}
 
 
-设计：
+返回JSON：
+
+{
+"plans":[
+{
+"title":"",
+"content":"",
+"tags":[],
+"score":{
+"blue":80,
+"hot":80,
+"profit":80
+}
+}
+]
+}
+
+
+规划：
 
 IP定位
 
@@ -183,21 +205,7 @@ IP定位
 
 爆款选题
 
-商业变现方式
-
-
-必须返回JSON格式：
-
-{
-"title":"",
-"content":"",
-"tags":"",
-"score":{
-"blue":0,
-"hot":0,
-"profit":0
-}
-}
+商业变现
 
 
 不要输出解释。
@@ -210,9 +218,10 @@ IP定位
 
 
 
-    // =========================
+
+    // =====================
     // 蓝海选品
-    // =========================
+    // =====================
 
     else if(mode === "blue"){
 
@@ -222,38 +231,42 @@ IP定位
 你是一名电商蓝海选品专家。
 
 
-分析：
+产品：
 
 ${input}
 
 
-输出：
+返回JSON：
+
+{
+"plans":[
+{
+"title":"",
+"content":"",
+"tags":[],
+"score":{
+"blue":80,
+"hot":80,
+"profit":80
+}
+}
+]
+}
+
+
+分析：
 
 市场需求
 
 用户需求
 
-竞争情况
+竞争程度
 
 利润空间
 
 推荐玩法
 
-蓝海评分
-
-
-必须返回JSON格式：
-
-{
-"title":"",
-"content":"",
-"tags":"",
-"score":{
-"blue":0,
-"hot":0,
-"profit":0
-}
-}
+蓝海机会
 
 
 不要输出解释。
@@ -266,9 +279,10 @@ ${input}
 
 
 
-    // =========================
+
+    // =====================
     // 默认
-    // =========================
+    // =====================
 
     else{
 
@@ -283,6 +297,24 @@ ${input}
 ${input}
 
 
+返回JSON：
+
+{
+"plans":[
+{
+"title":"",
+"content":"",
+"tags":[],
+"score":{
+"blue":80,
+"hot":80,
+"profit":80
+}
+}
+]
+}
+
+
 生成：
 
 爆款标题
@@ -291,25 +323,9 @@ ${input}
 
 商品卖点
 
-热门标签
+标签
 
-蓝海评分
-
-利润评分
-
-
-必须返回JSON格式：
-
-{
-"title":"",
-"content":"",
-"tags":"",
-"score":{
-"blue":0,
-"hot":0,
-"profit":0
-}
-}
+评分
 
 
 不要输出解释。
@@ -317,8 +333,6 @@ ${input}
 `
 
     }
-
-
 
 
 
@@ -356,13 +370,12 @@ ${input}
 
           messages:[
 
+
             {
 
               role:"system",
 
-              content:
-
-              "你是专业的小红书商业AI助手，只返回JSON数据"
+              content:"你是专业小红书商业AI助手，只返回JSON"
 
             },
 
@@ -379,21 +392,13 @@ ${input}
           ],
 
 
-          temperature:0.8,
-
-
-          response_format:{
-
-            type:"json_object"
-
-          }
+          temperature:0.7
 
 
         })
 
 
       }
-
 
     )
 
@@ -407,81 +412,88 @@ ${input}
 
     const aiContent =
 
-      data.choices?.[0]?.message?.content
+    data.choices?.[0]?.message?.content || ""
 
 
-let result
 
 
-try{
+
+    let result
 
 
-result = JSON.parse(aiContent)
 
 
-}
 
-catch{
-
-
-try{
+    // =====================
+    // JSON解析
+    // =====================
 
 
-const clean = aiContent
-.replace(/```json/g,"")
-.replace(/```/g,"")
-.trim()
+    try{
 
 
-result = JSON.parse(clean)
+      const clean = aiContent
+
+      .replace(/```json/g,"")
+
+      .replace(/```/g,"")
+
+      .trim()
 
 
-}
+
+      result = JSON.parse(clean)
 
 
-catch{
+
+    }
 
 
-result = {
+    catch(error){
 
 
-plans:[
 
-{
-
-title:"AI生成结果",
-
-content:aiContent || "生成失败",
-
-tags:"#小红书 #爆款",
-
-score:{
+      result = {
 
 
-blue:80,
+        plans:[
 
-hot:85,
+          {
 
-profit:75
+            title:"AI生成结果",
 
+            content:aiContent,
 
-}
+            tags:[
 
+              "#小红书",
 
-}
+              "#爆款"
 
-]
-
-
-}
-
-
-}
+            ],
 
 
-}
+            score:{
 
 
+              blue:80,
+
+              hot:80,
+
+              profit:80
+
+
+            }
+
+          }
+
+        ]
+
+      }
+
+
+
+    }
 
 
 
@@ -498,6 +510,7 @@ profit:75
 
 
   }
+
 
   catch(error){
 
