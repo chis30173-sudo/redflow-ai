@@ -410,56 +410,78 @@ ${input}
       data.choices?.[0]?.message?.content
 
 
+let result
 
 
-
-    let result
-
+try{
 
 
-    try{
+result = JSON.parse(aiContent)
 
 
-      result = JSON.parse(aiContent)
+}
+
+catch{
 
 
-    }
+try{
 
 
-    catch{
+const clean = aiContent
+.replace(/```json/g,"")
+.replace(/```/g,"")
+.trim()
 
 
-      result={
+result = JSON.parse(clean)
 
 
-        title:"AI生成结果",
+}
 
 
-        content:aiContent || "生成失败",
+catch{
 
 
-        tags:"#小红书 #爆款",
+result = {
 
 
-        score:{
+plans:[
+
+{
+
+title:"AI生成结果",
+
+content:aiContent || "生成失败",
+
+tags:"#小红书 #爆款",
+
+score:{
 
 
-          blue:80,
+blue:80,
+
+hot:85,
+
+profit:75
 
 
-          hot:85,
+}
 
 
-          profit:75
+}
+
+]
 
 
-        }
+}
 
 
-      }
+}
 
 
-    }
+}
+
+
 
 
 
