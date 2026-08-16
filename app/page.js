@@ -2,305 +2,228 @@
 
 import { useState } from "react"
 
-
 export default function Home(){
 
-  const [product,setProduct] = useState("")
-  const [result,setResult] = useState(null)
-  const [loading,setLoading] = useState(false)
-  const [error,setError] = useState("")
+const [mode,setMode]=useState("product")
+const [input,setInput]=useState("")
+const [result,setResult]=useState("")
+const [loading,setLoading]=useState(false)
 
 
-  async function generate(){
+async function generate(){
 
-    if(!product){
-      setError("请输入商品")
-      return
-    }
+if(!input){
+alert("请输入内容")
+return
+}
 
+setLoading(true)
+setResult("")
 
-    setLoading(true)
-    setResult(null)
-    setError("")
 
+try{
 
-    try{
+const res=await fetch("/api/generate",{
 
-      const res = await fetch("/api/generate",{
+method:"POST",
 
-        method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
 
-        headers:{
-          "Content-Type":"application/json"
-        },
+body:JSON.stringify({
 
-        body:JSON.stringify({
-          product
-        })
+mode,
+input
 
-      })
+})
 
+})
 
-      const data = await res.json()
 
+const data=await res.json()
 
-      if(data.error){
+setResult(data.result || data.error)
 
-        setError(data.error)
-        setLoading(false)
-        return
 
-      }
+}catch(e){
 
+setResult(e.message)
 
-      let jsonResult
+}
 
 
-      try{
+setLoading(false)
 
-        jsonResult = JSON.parse(data.result)
+}
 
-      }catch{
 
-        jsonResult = {
-          title:"AI生成结果",
-          content:data.result,
-          tiktok:"",
-          selling_points:"",
-          tags:""
-        }
 
-      }
+return (
 
+<main
+style={{
+minHeight:"100vh",
+background:"#0f172a",
+color:"white",
+padding:"40px"
+}}
+>
 
-      setResult(jsonResult)
 
+<div
+style={{
+maxWidth:"900px",
+margin:"auto",
+textAlign:"center"
+}}
+>
 
-    }catch(err){
 
-      setError(err.message)
+<h1
+style={{
+fontSize:"48px"
+}}
+>
+🚀 RedFlow AI
+</h1>
 
-    }
 
+<p
+style={{
+fontSize:"22px"
+}}
+>
+小红书商业增长AI助手
+</p>
 
-    setLoading(false)
 
-  }
 
+<div
+style={{
+display:"grid",
+gridTemplateColumns:"repeat(2,1fr)",
+gap:"20px",
+marginTop:"40px"
+}}
+>
 
 
-  return (
+<button onClick={()=>setMode("blue")}>
+🔥 蓝海商品发现
+</button>
 
-    <main
-    style={{
-      minHeight:"100vh",
-      background:"#0f172a",
-      color:"white",
-      padding:"40px"
-    }}
-    >
 
+<button onClick={()=>setMode("content")}>
+✍️ 爆款内容工厂
+</button>
 
-      <div
-      style={{
-        maxWidth:"900px",
-        margin:"auto",
-        textAlign:"center"
-      }}
-      >
 
+<button onClick={()=>setMode("analyze")}>
+📊 爆款笔记拆解
+</button>
 
-        <h1
-        style={{
-          fontSize:"48px"
-        }}
-        >
-          🚀 RedFlow AI
-        </h1>
 
+<button onClick={()=>setMode("ip")}>
+🚀 个人IP打造
+</button>
 
-        <p
-        style={{
-          fontSize:"22px"
-        }}
-        >
-          AI爆款内容生成平台
-        </p>
 
+</div>
 
 
-        <div
-        style={{
-          background:"#1e293b",
-          padding:"30px",
-          borderRadius:"20px",
-          marginTop:"40px"
-        }}
-        >
 
+<div
+style={{
+marginTop:"40px",
+background:"#1e293b",
+padding:"30px",
+borderRadius:"20px"
+}}
+>
 
-          <input
 
-          value={product}
+<textarea
 
-          onChange={(e)=>setProduct(e.target.value)}
+placeholder="输入你的产品、行业、账号情况..."
 
-          placeholder="输入商品，例如 Labubu 毛绒玩偶"
+value={input}
 
-          style={{
+onChange={(e)=>setInput(e.target.value)}
 
-            width:"80%",
-            padding:"15px",
-            fontSize:"18px",
-            borderRadius:"10px"
+style={{
 
-          }}
+width:"90%",
+height:"120px",
+padding:"15px",
+fontSize:"18px"
 
-          />
+}}
 
+/>
 
-          <br/>
 
+<br/>
 
-          <button
 
-          onClick={generate}
+<button
 
-          style={{
+onClick={generate}
 
-            marginTop:"20px",
-            padding:"15px 40px",
-            borderRadius:"30px",
-            background:"#ff3366",
-            color:"white",
-            fontSize:"18px",
-            cursor:"pointer"
+style={{
 
-          }}
+marginTop:"20px",
+padding:"15px 40px",
+background:"#ff3366",
+color:"white",
+borderRadius:"30px"
 
-          >
+}}
 
-          {
-            loading
-            ?
-            "🔥AI生成中..."
-            :
-            "🔥立即生成爆款内容"
-          }
+>
 
+{
+loading
+?
+"AI分析中..."
+:
+"🔥开始生成"
+}
 
-          </button>
+</button>
 
 
-        </div>
+</div>
 
 
 
 
-        {
-          error &&
+{
+result &&
 
-          <div
-          style={{
+<div
+style={{
+marginTop:"40px",
+background:"#1e293b",
+padding:"30px",
+borderRadius:"20px",
+textAlign:"left",
+whiteSpace:"pre-wrap"
+}}
+>
 
-            marginTop:"30px",
-            background:"#7f1d1d",
-            padding:"20px",
-            borderRadius:"15px"
+{result}
 
-          }}
-          >
+</div>
 
-          ❌ {error}
+}
 
-          </div>
 
-        }
 
+</div>
 
+</main>
 
-
-        {
-          result &&
-
-          <div
-
-          style={{
-
-            marginTop:"40px",
-            background:"#1e293b",
-            padding:"30px",
-            borderRadius:"20px",
-            textAlign:"left"
-
-          }}
-
-          >
-
-
-          <h2>
-          🔥 {result.title}
-          </h2>
-
-
-          <hr/>
-
-
-          <h3>
-          📝 小红书文案
-          </h3>
-
-
-          <p>
-          {result.content}
-          </p>
-
-
-
-          <h3>
-          🎬 TikTok脚本
-          </h3>
-
-
-          <p>
-          {result.tiktok}
-          </p>
-
-
-
-          <h3>
-          💡 商品卖点
-          </h3>
-
-
-          <p>
-          {result.selling_points}
-          </p>
-
-
-
-          <h3>
-          🏷️ 标签
-          </h3>
-
-
-          <p>
-          {result.tags}
-          </p>
-
-
-
-          </div>
-
-        }
-
-
-
-      </div>
-
-
-    </main>
-
-  )
+)
 
 }
