@@ -1,70 +1,77 @@
 export async function POST(request) {
-  try {
-    const { product } = await request.json();
 
-    if (!product) {
-      return Response.json({
-        error: "请输入商品"
-      });
-    }
+  const body = await request.json()
+
+  const product = body.product
 
 
-    const prompt = `
-你是一名专业电商爆款内容专家。
+  const apiKey = process.env.OPENAI_API_KEY
 
-请根据商品：
-${product}
 
-生成：
+  const response = await fetch(
+    "https://api.openai.com/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
 
-1. 小红书爆款标题（3个）
-2. 爆款文案
-3. TikTok短视频脚本
-4. 商品卖点
-5. 推荐标签
+      body: JSON.stringify({
+
+        model: "gpt-4.1-mini",
+
+        messages: [
+
+          {
+            role: "system",
+            content:
+            "你是一个专业的小红书运营、电商营销专家，擅长生成爆款内容。"
+          },
+
+          {
+            role: "user",
+            content:
+`
+请帮我生成商品 ${product} 的营销内容。
+
+返回JSON格式：
+
+{
+"title":"",
+"content":"",
+"tiktok":"",
+"selling_points":"",
+"tags":""
+}
 
 要求：
-年轻化、有营销力、适合社交媒体传播。
-`;
+1. 小红书爆款风格
+2. 年轻化语言
+3. 包含购买欲
+4. 适合商业推广
+`
+          }
+
+        ]
+
+      })
+
+    }
+  )
 
 
-    const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "Authorization":
-          `Bearer ${process.env.OPENAI_API_KEY}`
-        },
-
-        body:JSON.stringify({
-          model:"gpt-4o-mini",
-          messages:[
-            {
-              role:"user",
-              content:prompt
-            }
-          ]
-        })
-      }
-    );
+  const data = await response.json()
 
 
-    const data = await response.json();
+  const result =
+  data.choices[0].message.content
 
 
-    return Response.json({
-      result:
-      data.choices[0].message.content
-    });
+  return Response.json({
 
+    result
 
-  } catch(error){
+  })
 
-    return Response.json({
-      error:error.message
-    });
-
-  }
 }
