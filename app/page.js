@@ -13,13 +13,12 @@ export default function Home(){
   async function generate(){
 
     if(!product){
-      alert("请输入商品名称")
+      alert("请输入商品")
       return
     }
 
 
     setLoading(true)
-    setResult(null)
 
 
     try{
@@ -49,7 +48,7 @@ export default function Home(){
 
       console.log(error)
 
-      alert("生成失败，请稍后再试")
+      alert("生成失败")
 
     }
 
@@ -83,12 +82,12 @@ export default function Home(){
 
         <h1
         style={{
-          fontSize:"48px",
-          marginBottom:"10px"
+          fontSize:"48px"
         }}
         >
           🚀 RedFlow AI
         </h1>
+
 
 
         <p
@@ -120,23 +119,18 @@ export default function Home(){
           placeholder="输入商品，例如 Labubu 毛绒玩偶"
 
           style={{
-
             width:"80%",
-
             padding:"15px",
-
             fontSize:"18px",
-
-            borderRadius:"10px",
-
-            border:"none"
-
+            borderRadius:"10px"
           }}
 
           />
 
 
+
           <br/>
+
 
 
           <button
@@ -144,21 +138,13 @@ export default function Home(){
           onClick={generate}
 
           style={{
-
             marginTop:"20px",
-
             padding:"15px 40px",
-
             borderRadius:"30px",
-
             background:"#ff3366",
-
             color:"white",
-
             fontSize:"18px",
-
             cursor:"pointer"
-
           }}
 
           >
@@ -181,57 +167,57 @@ export default function Home(){
 
 
         {
-          result &&
+
+        result &&
+
+        <div
+
+        style={{
+
+          marginTop:"40px",
+
+          background:"#1e293b",
+
+          padding:"30px",
+
+          borderRadius:"20px",
+
+          textAlign:"left"
+
+        }}
+
+        >
 
 
-          <div
+          <h2>
+            🔥 AI生成结果
+          </h2>
+
+
+
+          <pre
 
           style={{
 
-            marginTop:"40px",
+            whiteSpace:"pre-wrap",
 
-            background:"#1e293b",
+            lineHeight:"1.8",
 
-            padding:"30px",
-
-            borderRadius:"20px",
-
-            textAlign:"left"
+            fontSize:"16px"
 
           }}
 
           >
 
+          {
+            result.result
+          }
 
-            <h2>
-              🔥 AI生成结果
-            </h2>
-
-
-
-            <pre
-
-            style={{
-
-              whiteSpace:"pre-wrap",
-
-              fontSize:"18px",
-
-              lineHeight:"1.8"
-
-            }}
-
-            >
-
-            {
-              result.result
-            }
-
-            </pre>
+          </pre>
 
 
 
-          </div>
+        </div>
 
         }
 
