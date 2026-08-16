@@ -1,50 +1,88 @@
-export async function POST(request){
+export async function POST(request) {
 
-  try{
+  try {
 
     const body = await request.json()
 
     const product = body.product
 
 
-    const apiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.DEEPSEEK_API_KEY
 
 
-    if(!apiKey){
+    if (!apiKey) {
 
       return Response.json({
-        error:"没有找到 OPENAI_API_KEY"
+        error: "没有找到 DEEPSEEK_API_KEY"
       })
 
     }
 
 
+
     const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
+      "https://api.deepseek.com/chat/completions",
       {
 
-        method:"POST",
+        method: "POST",
 
-        headers:{
-          "Content-Type":"application/json",
-          "Authorization":`Bearer ${apiKey}`
+        headers: {
+
+          "Content-Type": "application/json",
+
+          "Authorization": `Bearer ${apiKey}`
+
         },
 
 
-        body:JSON.stringify({
+        body: JSON.stringify({
 
-          model:"gpt-4.1-mini",
+          model: "deepseek-chat",
 
-          messages:[
+
+          messages: [
 
             {
-              role:"system",
-              content:"你是专业电商营销专家"
+
+              role: "system",
+
+              content:
+              "你是一个专业的小红书运营专家、电商营销专家，擅长生成爆款商品内容。"
+
             },
 
+
             {
-              role:"user",
-              content:`生成商品${product}的小红书爆款内容`
+
+              role: "user",
+
+              content:
+
+`
+请帮我生成商品：${product}
+
+的小红书爆款营销内容。
+
+请返回JSON格式：
+
+{
+"title":"",
+"content":"",
+"tiktok":"",
+"selling_points":"",
+"tags":""
+}
+
+
+要求：
+
+1. 标题具有爆款吸引力
+2. 符合年轻用户语言
+3. 增强购买欲
+4. 适合电商推广
+5. 生成TikTok短视频脚本
+`
+
             }
 
           ]
@@ -52,34 +90,42 @@ export async function POST(request){
         })
 
       }
+
+
     )
 
 
     const data = await response.json()
 
 
-    console.log(data)
 
-
-    if(!data.choices){
+    if(data.error){
 
       return Response.json({
 
-        error:data
+        error:data.error
 
       })
 
     }
 
 
+
+    const result =
+
+    data.choices[0].message.content
+
+
+
     return Response.json({
 
-      result:data.choices[0].message.content
+      result
 
     })
 
 
-  }catch(error){
+
+  } catch(error){
 
 
     return Response.json({
