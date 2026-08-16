@@ -8,6 +8,7 @@ export default function Home(){
   const [product,setProduct] = useState("")
   const [result,setResult] = useState(null)
   const [loading,setLoading] = useState(false)
+  const [error,setError] = useState("")
 
 
   async function generate(){
@@ -19,6 +20,8 @@ export default function Home(){
 
 
     setLoading(true)
+    setResult(null)
+    setError("")
 
 
     try{
@@ -41,14 +44,26 @@ export default function Home(){
       const data = await res.json()
 
 
-      setResult(data)
+      if(data.error){
+
+        setError(data.error)
+        setLoading(false)
+        return
+
+      }
 
 
-    }catch(error){
+      // DeepSeek 返回的是 JSON 字符串
+      const jsonResult = JSON.parse(data.result)
 
-      console.log(error)
 
-      alert("生成失败")
+      setResult(jsonResult)
+
+
+
+    }catch(err){
+
+      setError(err.message)
 
     }
 
@@ -89,7 +104,6 @@ export default function Home(){
         </h1>
 
 
-
         <p
         style={{
           fontSize:"22px"
@@ -119,10 +133,12 @@ export default function Home(){
           placeholder="输入商品，例如 Labubu 毛绒玩偶"
 
           style={{
+
             width:"80%",
             padding:"15px",
             fontSize:"18px",
             borderRadius:"10px"
+
           }}
 
           />
@@ -132,12 +148,12 @@ export default function Home(){
           <br/>
 
 
-
           <button
 
           onClick={generate}
 
           style={{
+
             marginTop:"20px",
             padding:"15px 40px",
             borderRadius:"30px",
@@ -145,6 +161,7 @@ export default function Home(){
             color:"white",
             fontSize:"18px",
             cursor:"pointer"
+
           }}
 
           >
@@ -166,58 +183,108 @@ export default function Home(){
 
 
 
+
         {
+          error &&
 
-        result &&
+          <div
+          style={{
+            marginTop:"30px",
+            background:"#7f1d1d",
+            padding:"20px",
+            borderRadius:"15px"
+          }}
+          >
 
-        <div
+          ❌ {error}
 
-        style={{
+          </div>
 
-          marginTop:"40px",
-
-          background:"#1e293b",
-
-          padding:"30px",
-
-          borderRadius:"20px",
-
-          textAlign:"left"
-
-        }}
-
-        >
-
-
-          <h2>
-            🔥 AI生成结果
-          </h2>
+        }
 
 
 
-          <pre
+
+
+        {
+          result &&
+
+          <div
 
           style={{
 
-            whiteSpace:"pre-wrap",
-
-            lineHeight:"1.8",
-
-            fontSize:"16px"
+            marginTop:"40px",
+            background:"#1e293b",
+            padding:"30px",
+            borderRadius:"20px",
+            textAlign:"left"
 
           }}
 
           >
 
-          {
-            result.result
-          }
 
-          </pre>
-
+          <h2>
+          🔥 {result.title}
+          </h2>
 
 
-        </div>
+
+          <hr/>
+
+
+
+          <h3>
+          📝 小红书文案
+          </h3>
+
+
+          <p>
+          {result.content}
+          </p>
+
+
+
+
+          <h3>
+          🎬 TikTok脚本
+          </h3>
+
+
+          <p>
+          {result.tiktok}
+          </p>
+
+
+
+
+
+          <h3>
+          💡 商品卖点
+          </h3>
+
+
+          <p>
+          {result.selling_points}
+          </p>
+
+
+
+
+
+          <h3>
+          🏷️ 标签
+          </h3>
+
+
+          <p>
+          {result.tags}
+          </p>
+
+
+
+          </div>
+
 
         }
 
@@ -229,5 +296,6 @@ export default function Home(){
     </main>
 
   )
+
 
 }
