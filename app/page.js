@@ -5,163 +5,243 @@ import { useState } from "react"
 
 export default function Home(){
 
-const [product,setProduct] = useState("")
-const [result,setResult] = useState(null)
-const [loading,setLoading] = useState(false)
+  const [product,setProduct] = useState("")
+  const [result,setResult] = useState(null)
+  const [loading,setLoading] = useState(false)
 
 
-async function generate(){
+  async function generate(){
 
-setLoading(true)
-
-
-const res = await fetch("/api/generate",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-product
-})
-})
+    if(!product){
+      alert("请输入商品名称")
+      return
+    }
 
 
-const data = await res.json()
-
-setResult(data)
-
-setLoading(false)
-
-}
+    setLoading(true)
+    setResult(null)
 
 
+    try{
 
-return (
+      const res = await fetch("/api/generate",{
 
-<main style={{
-minHeight:"100vh",
-background:"#0f172a",
-color:"white",
-padding:"40px"
-}}>
+        method:"POST",
 
+        headers:{
+          "Content-Type":"application/json"
+        },
 
-<div style={{
-maxWidth:"900px",
-margin:"auto",
-textAlign:"center"
-}}>
+        body:JSON.stringify({
+          product
+        })
 
-
-<h1 style={{
-fontSize:"48px"
-}}>
-🚀 RedFlow AI
-</h1>
+      })
 
 
-<p style={{
-fontSize:"22px"
-}}>
-AI爆款内容生成平台
-</p>
+      const data = await res.json()
+
+
+      setResult(data)
+
+
+    }catch(error){
+
+      console.log(error)
+
+      alert("生成失败，请稍后再试")
+
+    }
+
+
+    setLoading(false)
+
+  }
 
 
 
-<div style={{
-background:"#1e293b",
-padding:"30px",
-borderRadius:"20px",
-marginTop:"40px"
-}}>
+  return (
+
+    <main
+    style={{
+      minHeight:"100vh",
+      background:"#0f172a",
+      color:"white",
+      padding:"40px"
+    }}
+    >
 
 
-<input
-
-value={product}
-
-onChange={(e)=>setProduct(e.target.value)}
-
-placeholder="输入商品，例如 Labubu 毛绒玩偶"
-
-style={{
-width:"80%",
-padding:"15px",
-fontSize:"18px",
-borderRadius:"10px"
-}}
-
-/>
+      <div
+      style={{
+        maxWidth:"900px",
+        margin:"auto",
+        textAlign:"center"
+      }}
+      >
 
 
-<br/>
+        <h1
+        style={{
+          fontSize:"48px",
+          marginBottom:"10px"
+        }}
+        >
+          🚀 RedFlow AI
+        </h1>
 
 
-<button
-
-onClick={generate}
-
-style={{
-marginTop:"20px",
-padding:"15px 40px",
-borderRadius:"30px",
-background:"#ff3366",
-color:"white",
-fontSize:"18px"
-}}
-
->
-
-{loading?
-"生成中..."
-:
-"🔥立即生成爆款内容"}
-
-</button>
-
-
-</div>
+        <p
+        style={{
+          fontSize:"22px"
+        }}
+        >
+          AI爆款内容生成平台
+        </p>
 
 
 
-{
-result &&
-
-<div style={{
-marginTop:"40px",
-background:"#1e293b",
-padding:"30px",
-borderRadius:"20px",
-textAlign:"left"
-}}>
+        <div
+        style={{
+          background:"#1e293b",
+          padding:"30px",
+          borderRadius:"20px",
+          marginTop:"40px"
+        }}
+        >
 
 
-<h2>
-{result.title}
-</h2>
+          <input
+
+          value={product}
+
+          onChange={(e)=>setProduct(e.target.value)}
+
+          placeholder="输入商品，例如 Labubu 毛绒玩偶"
+
+          style={{
+
+            width:"80%",
+
+            padding:"15px",
+
+            fontSize:"18px",
+
+            borderRadius:"10px",
+
+            border:"none"
+
+          }}
+
+          />
 
 
-<p>
-{result.content}
-</p>
+          <br/>
 
 
-<p>
-{result.tags}
-</p>
+          <button
+
+          onClick={generate}
+
+          style={{
+
+            marginTop:"20px",
+
+            padding:"15px 40px",
+
+            borderRadius:"30px",
+
+            background:"#ff3366",
+
+            color:"white",
+
+            fontSize:"18px",
+
+            cursor:"pointer"
+
+          }}
+
+          >
+
+          {
+            loading
+            ?
+            "AI生成中..."
+            :
+            "🔥立即生成爆款内容"
+          }
 
 
-</div>
-
-}
+          </button>
 
 
+        </div>
 
-</div>
 
 
-</main>
 
-)
+        {
+          result &&
+
+
+          <div
+
+          style={{
+
+            marginTop:"40px",
+
+            background:"#1e293b",
+
+            padding:"30px",
+
+            borderRadius:"20px",
+
+            textAlign:"left"
+
+          }}
+
+          >
+
+
+            <h2>
+              🔥 AI生成结果
+            </h2>
+
+
+
+            <pre
+
+            style={{
+
+              whiteSpace:"pre-wrap",
+
+              fontSize:"18px",
+
+              lineHeight:"1.8"
+
+            }}
+
+            >
+
+            {
+              result.result
+            }
+
+            </pre>
+
+
+
+          </div>
+
+        }
+
+
+
+      </div>
+
+
+    </main>
+
+  )
 
 }
