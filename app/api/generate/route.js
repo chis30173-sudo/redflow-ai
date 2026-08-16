@@ -2,134 +2,175 @@ export async function POST(request) {
 
   try {
 
-    const body = await request.json()
-
-    const mode = body.mode
-    const input = body.input
-
+    const { mode, input } = await request.json()
 
     const apiKey = process.env.DEEPSEEK_API_KEY
 
 
     if (!apiKey) {
-
       return Response.json({
-        error:"没有找到 DEEPSEEK_API_KEY"
+        error: "缺少 DeepSeek API Key"
       })
-
     }
 
 
     let prompt = ""
 
 
-    if(mode==="blue"){
+    // 蓝海商品发现
+    if (mode === "blue") {
 
       prompt = `
 你是一名小红书电商选品专家。
 
-请分析这个方向：
+用户想分析：
 
 ${input}
 
-帮我寻找蓝海商品机会。
 
-输出：
+请帮助寻找蓝海商业机会。
 
-1. 推荐商品10个
-2. 市场需求分析
-3. 竞争程度
-4. 利润空间
-5. 目标用户
-6. 小红书内容方向
-7. 为什么现在适合进入
+请按照以下结构输出：
+
+# 蓝海机会分析
+
+## 1. 推荐产品方向（10个）
+
+## 2. 市场需求分析
+
+## 3. 当前竞争情况
+
+## 4. 用户画像
+
+## 5. 利润空间分析
+
+## 6. 小红书内容切入方式
+
+## 7. 新卖家进入建议
+
 
 要求：
-像专业投资分析报告。
+像一个专业商业顾问。
 `
 
     }
 
 
 
-    if(mode==="content"){
+    // 爆款内容生成
+    if (mode === "content") {
 
       prompt = `
-你是一名小红书爆款内容专家。
+你是一名小红书爆款内容运营专家。
+
 
 产品：
 
 ${input}
 
 
-请生成10篇爆款图文方案。
+请生成爆款内容方案。
 
-每篇包含：
+输出：
 
-标题：
-开头3秒钩子：
-正文：
-购买理由：
-评论区引导：
-热门标签：
+# 爆款标题（20个）
+
+# 种草内容方向
+
+# 测评内容方向
+
+# 故事内容方向
+
+# 成交内容方向
+
+# 热门标签建议
+
+# 评论区互动话术
 
 
 要求：
 符合真实小红书用户语言。
+不要像广告。
 `
 
     }
 
 
 
-    if(mode==="analyze"){
+
+    // 爆款拆解
+    if (mode === "analyze") {
 
       prompt = `
-你是一名小红书爆款分析专家。
+你是一名小红书爆款分析师。
 
-请分析下面内容：
+
+需要分析：
 
 ${input}
 
 
-输出：
+请输出：
 
-1. 为什么爆火
-2. 标题策略
-3. 图片策略
-4. 用户心理
-5. 成交逻辑
-6. 如何复制优化
+# 爆款原因
 
+## 标题分析
+
+## 图片分析
+
+## 用户心理分析
+
+## 评论区传播原因
+
+## 成交逻辑
+
+## 可以复制优化的方法
+
+
+要求：
+给商业卖家参考。
 `
 
     }
 
 
 
-    if(mode==="ip"){
+
+    // IP打造
+    if (mode === "ip") {
 
       prompt = `
-你是一名个人IP打造专家。
+你是一名个人IP商业顾问。
 
 
-用户信息：
+用户情况：
 
 ${input}
 
 
 请设计：
 
-1. IP定位
-2. 人设标签
-3. 内容方向
-4. 30天发布计划
-5. 爆款栏目设计
-6. 商业变现方式
+# IP定位
 
+# 人设标签
+
+# 账号名称方向
+
+# 内容栏目规划
+
+# 30天发布计划
+
+# 粉丝增长策略
+
+# 商业变现方式
+
+
+要求：
+适合小红书长期运营。
 `
 
     }
+
 
 
 
@@ -140,12 +181,8 @@ ${input}
         method:"POST",
 
         headers:{
-
           "Content-Type":"application/json",
-
-          "Authorization":
-          `Bearer ${apiKey}`
-
+          "Authorization":`Bearer ${apiKey}`
         },
 
 
@@ -158,7 +195,18 @@ ${input}
             {
               role:"system",
               content:
-              "你是小红书商业增长专家，帮助用户发现机会、创造内容和打造个人品牌。"
+              `
+你是 RedFlow AI。
+
+你的专业领域：
+小红书电商增长、
+潮玩市场分析、
+爆款内容策划、
+个人IP打造。
+
+你的目标：
+帮助用户找到商业机会并增长。
+`
             },
 
 
@@ -167,7 +215,9 @@ ${input}
               content:prompt
             }
 
-          ]
+          ],
+
+          temperature:0.8
 
         })
 
@@ -175,35 +225,28 @@ ${input}
     )
 
 
-
     const data = await response.json()
-
-
-    if(data.error){
-
-      return Response.json({
-        error:data.error
-      })
-
-    }
-
 
 
     return Response.json({
 
       result:
-      data.choices[0].message.content
+      data.choices?.[0]?.message?.content
+      ||
+      "生成失败"
 
     })
 
 
-  } catch(error){
+  } catch(error) {
+
 
     return Response.json({
 
       error:error.message
 
     })
+
 
   }
 
