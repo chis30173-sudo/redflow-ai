@@ -1,42 +1,52 @@
 "use client"
 
 import { useState } from "react"
-
-export default function Home() {
-
-  const [mode, setMode] = useState("blue")
-  const [input, setInput] = useState("")
-  const [result, setResult] = useState("")
-  const [loading, setLoading] = useState(false)
+import FeatureCard from "./components/FeatureCard"
+import ResultCard from "./components/ResultCard"
 
 
-  const modes = [
+export default function Home(){
+
+  const [mode,setMode]=useState("blue")
+  const [input,setInput]=useState("")
+  const [result,setResult]=useState("")
+  const [loading,setLoading]=useState(false)
+
+
+
+  const features=[
+
     {
-      id: "blue",
-      title: "🔥 蓝海商品发现",
-      desc: "找到值得卖的产品机会"
+      id:"blue",
+      title:"🔥 蓝海商品发现",
+      desc:"寻找值得进入的新机会"
     },
+
     {
-      id: "content",
-      title: "✍️ 爆款内容工厂",
-      desc: "生成小红书爆款图文"
+      id:"content",
+      title:"✍️ 爆款内容工厂",
+      desc:"快速生成小红书内容"
     },
+
     {
-      id: "analyze",
-      title: "📊 爆款笔记拆解",
-      desc: "分析别人为什么爆"
+      id:"analyze",
+      title:"📊 爆款拆解",
+      desc:"分析热门产品逻辑"
     },
+
     {
-      id: "ip",
-      title: "🚀 个人IP打造",
-      desc: "规划账号成长路线"
+      id:"ip",
+      title:"🚀 个人IP打造",
+      desc:"规划账号成长路线"
     }
+
   ]
 
 
-  async function generate() {
 
-    if (!input) {
+  async function generate(){
+
+    if(!input){
       alert("请输入内容")
       return
     }
@@ -46,34 +56,42 @@ export default function Home() {
     setResult("")
 
 
-    try {
-
-      const res = await fetch("/api/generate", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-          mode,
-          input
-        })
-
-      })
+    try{
 
 
-      const data = await res.json()
+      const res=await fetch(
+        "/api/generate",
+        {
+
+          method:"POST",
+
+          headers:{
+            "Content-Type":"application/json"
+          },
+
+
+          body:JSON.stringify({
+
+            mode,
+            input
+
+          })
+
+        }
+      )
+
+
+      const data=await res.json()
+
 
       setResult(
         data.result || data.error
       )
 
 
-    } catch(error) {
+    }catch(e){
 
-      setResult(error.message)
+      setResult(e.message)
 
     }
 
@@ -84,93 +102,111 @@ export default function Home() {
 
 
 
-  return (
+
+  return(
 
     <main
+
       style={{
+
         minHeight:"100vh",
+
         background:"#0f172a",
+
         color:"#fff",
+
         padding:"40px"
+
       }}
+
     >
 
+
       <div
+
         style={{
+
           maxWidth:"1000px",
+
           margin:"auto"
+
         }}
+
       >
 
 
         <h1
+
           style={{
-            fontSize:"48px",
-            textAlign:"center"
+
+            textAlign:"center",
+
+            fontSize:"45px"
+
           }}
+
         >
+
           🚀 RedFlow AI
+
         </h1>
 
 
         <p
+
           style={{
+
             textAlign:"center",
+
             fontSize:"22px"
+
           }}
+
         >
-          小红书商业增长智能助手
+
+          小红书潮玩电商增长智能助手
+
         </p>
 
 
 
+
         <div
+
           style={{
+
             display:"grid",
+
             gridTemplateColumns:"repeat(2,1fr)",
+
             gap:"20px",
+
             marginTop:"40px"
+
           }}
+
         >
 
         {
-          modes.map(item=>(
 
-            <button
+          features.map(item=>(
+
+            <FeatureCard
 
               key={item.id}
 
+              title={item.title}
+
+              desc={item.desc}
+
+              active={mode===item.id}
+
               onClick={()=>setMode(item.id)}
 
-              style={{
-
-                padding:"25px",
-
-                borderRadius:"16px",
-
-                background:
-                mode===item.id
-                ?
-                "#ec4899"
-                :
-                "#1e293b",
-
-                color:"white",
-
-                cursor:"pointer"
-
-              }}
-
-            >
-
-              <h2>{item.title}</h2>
-
-              <p>{item.desc}</p>
-
-
-            </button>
+            />
 
           ))
+
         }
 
 
@@ -178,18 +214,26 @@ export default function Home() {
 
 
 
+
+
         <div
+
           style={{
+
             marginTop:"40px",
+
             background:"#1e293b",
+
             padding:"30px",
+
             borderRadius:"20px"
+
           }}
+
         >
 
-          <textarea
 
-            placeholder="输入产品、行业、账号情况，例如：潮玩娃衣，小红书卖货"
+          <textarea
 
             value={input}
 
@@ -197,20 +241,32 @@ export default function Home() {
               e=>setInput(e.target.value)
             }
 
+
+            placeholder="例如：潮玩娃衣、Labubu周边、小红书账号定位"
+
+
             style={{
+
               width:"100%",
-              height:"120px",
+
+              height:"130px",
+
               padding:"15px",
-              fontSize:"18px",
-              borderRadius:"10px"
+
+              borderRadius:"12px",
+
+              fontSize:"18px"
+
             }}
 
           />
 
 
+
           <button
 
             onClick={generate}
+
 
             style={{
 
@@ -220,13 +276,15 @@ export default function Home() {
 
               borderRadius:"30px",
 
-              background:"#f43f5e",
+              background:"#ec4899",
 
-              color:"white",
+              color:"#fff",
 
-              fontSize:"18px",
+              border:"none",
 
-              cursor:"pointer"
+              cursor:"pointer",
+
+              fontSize:"18px"
 
             }}
 
@@ -248,36 +306,11 @@ export default function Home() {
 
 
 
-
-        {
-          result &&
-
-          <div
-
-            style={{
-
-              marginTop:"40px",
-
-              background:"#1e293b",
-
-              padding:"30px",
-
-              borderRadius:"20px",
-
-              whiteSpace:"pre-wrap"
-
-            }}
-
-          >
-
-            {result}
-
-          </div>
-
-        }
+        <ResultCard result={result}/>
 
 
       </div>
+
 
     </main>
 
