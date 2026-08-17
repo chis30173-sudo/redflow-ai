@@ -248,8 +248,54 @@ input
 const data=await res.json()
 
 
-
 setResult(data.result)
+
+
+// ======================
+// 保存历史记录
+// ======================
+
+const oldHistory = JSON.parse(
+
+localStorage.getItem("history") || "[]"
+
+)
+
+
+
+const newRecord = {
+
+
+mode: mode,
+
+
+input: input,
+
+
+result: data.result,
+
+
+time: new Date().toLocaleString()
+
+
+
+}
+
+
+
+oldHistory.unshift(newRecord)
+
+
+
+// 最多保存50条
+
+localStorage.setItem(
+
+"history",
+
+JSON.stringify(oldHistory.slice(0,50))
+
+)
 
 
 
