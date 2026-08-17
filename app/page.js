@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import FeatureCard from "./components/FeatureCard"
 import ResultCard from "./components/ResultCard"
@@ -11,7 +11,7 @@ import ScoreCard from "./components/ScoreCard"
 export default function Home(){
 
 
-const [mode,setMode]=useState("image")
+const [mode,setMode]=useState("batch")
 
 const [input,setInput]=useState("")
 
@@ -19,16 +19,52 @@ const [result,setResult]=useState(null)
 
 const [loading,setLoading]=useState(false)
 
+const [user,setUser]=useState(null)
+
+
+
+// ======================
+// 检查登录状态
+// ======================
+
+useEffect(()=>{
+
+
+const data=localStorage.getItem("user")
+
+
+if(data){
+
+setUser(JSON.parse(data))
+
+}
+
+
+},[])
+
+
+
+
+// ======================
+// 退出登录
+// ======================
+
+function logout(){
+
+
+localStorage.removeItem("user")
+
+
+setUser(null)
+
+
+}
+
+
+
 
 
 const features=[
-
-
-{
-id:"image",
-title:"🔥 爆款图文生成",
-desc:"一键生成小红书6页爆款图文"
-},
 
 
 {
@@ -60,20 +96,21 @@ desc:"规划账号成长路线"
 
 
 {
-id:"trend",
-title:"📈 潮玩热点趋势",
-desc:"发现最新市场机会"
+id:"image",
+title:"🖼️ 爆款图文生成",
+desc:"一键生成小红书图文"
 },
 
 
 {
-id:"star",
-title:"⭐ 明星周边分析",
-desc:"分析粉丝经济机会"
+id:"trend",
+title:"📈 潮玩热点趋势",
+desc:"发现市场机会"
 }
 
 
 ]
+
 
 
 
@@ -91,6 +128,7 @@ return
 }
 
 
+
 setLoading(true)
 
 setResult(null)
@@ -100,7 +138,7 @@ setResult(null)
 try{
 
 
-const res = await fetch("/api/generate",{
+const res=await fetch("/api/generate",{
 
 method:"POST",
 
@@ -128,9 +166,7 @@ const data=await res.json()
 
 
 
-setResult(
-data.result || data
-)
+setResult(data.result)
 
 
 
@@ -141,29 +177,13 @@ catch(error){
 
 setResult({
 
-plans:[
-
-{
-
 title:"生成失败",
 
 content:error.message,
 
-tags:[],
+tags:"",
 
-score:{
-
-blue:0,
-
-hot:0,
-
-profit:0
-
-}
-
-}
-
-]
+score:{}
 
 })
 
@@ -175,6 +195,7 @@ profit:0
 setLoading(false)
 
 
+
 }
 
 
@@ -184,9 +205,12 @@ setLoading(false)
 
 return (
 
-<main
+
+<div
+
 
 style={{
+
 
 minHeight:"100vh",
 
@@ -194,94 +218,71 @@ background:"#020617",
 
 padding:"40px",
 
-color:"#fff"
+color:"#fff",
+
+position:"relative"
+
 
 }}
 
+
 >
 
+
+
+
+
+{/* 登录区域 */}
 
 <div
 
-style={{
-
-maxWidth:"1200px",
-
-margin:"auto"
-
-}}
-
->
-
-
-<h1
 
 style={{
 
-textAlign:"center",
 
-fontSize:"40px"
+position:"absolute",
+
+right:"40px",
+
+top:"30px"
+
 
 }}
 
->
-
-🔥 RedFlow AI
-
-</h1>
-
-
-
-<p
-
-style={{
-
-textAlign:"center",
-
-color:"#94a3b8"
-
-}}
-
->
-
-小红书AI增长助手 · 潮玩商业分析
-
-</p>
-
-
-
-
-
-<div
-
-style={{
-
-display:"grid",
-
-gridTemplateColumns:
-"repeat(auto-fit,minmax(220px,1fr))",
-
-gap:"20px",
-
-marginTop:"40px"
-
-}}
 
 >
 
 
 {
 
-features.map(item=>(
+
+user ?
 
 
-<div
 
-key={item.id}
+<div>
 
-onClick={()=>setMode(item.id)}
+
+👤 {user.email}
+
+
+<br/>
+
+
+免费体验用户
+
+
+<br/>
+
+
+<button
+
+onClick={logout}
+
 
 style={{
+
+marginTop:"10px",
 
 cursor:"pointer"
 
@@ -289,17 +290,161 @@ cursor:"pointer"
 
 >
 
+退出
+
+</button>
+
+
+</div>
+
+
+
+:
+
+
+<button
+
+onClick={()=>window.location.href="/login"}
+
+>
+
+🔐 登录
+
+</button>
+
+
+
+}
+
+
+
+</div>
+
+
+
+
+
+
+
+<h1
+
+
+style={{
+
+
+textAlign:"center",
+
+fontSize:"36px"
+
+
+}}
+
+
+>
+
+
+🔥 RedFlow AI
+
+
+</h1>
+
+
+
+
+
+<p
+
+
+style={{
+
+
+textAlign:"center",
+
+color:"#94a3b8"
+
+
+}}
+
+
+>
+
+
+小红书AI增长助手 · 潮玩商业分析
+
+
+</p>
+
+
+
+
+
+
+
+
+
+<div
+
+
+style={{
+
+
+display:"grid",
+
+gridTemplateColumns:"repeat(4,1fr)",
+
+gap:"20px",
+
+marginTop:"40px"
+
+
+}}
+
+
+>
+
+
+
+{
+
+
+features.map(item=>(
+
+
+<div
+
+
+key={item.id}
+
+
+onClick={()=>setMode(item.id)}
+
+
+style={{
+
+
+cursor:"pointer"
+
+
+}}
+
+
+>
+
 
 <FeatureCard
 
+
 title={item.title}
 
+
 desc={item.desc}
+
 
 />
 
 
 </div>
+
 
 
 ))
@@ -308,7 +453,10 @@ desc={item.desc}
 }
 
 
+
 </div>
+
+
 
 
 
@@ -318,41 +466,54 @@ desc={item.desc}
 
 <div
 
+
 style={{
+
 
 marginTop:"40px",
 
 background:"#1e293b",
 
-padding:"30px",
+padding:"25px",
 
 borderRadius:"20px"
 
+
 }}
+
 
 >
 
 
+
 <h2>
+
 
 当前模式：
 
 {mode}
+
 
 </h2>
 
 
 
 
+
 <textarea
+
 
 value={input}
 
+
 onChange={(e)=>setInput(e.target.value)}
 
-placeholder="例如：LABUBU娃衣、潮玩盲盒、明星周边"
+
+placeholder="例如：拉布布、娃衣、明星周边"
+
 
 style={{
+
 
 width:"100%",
 
@@ -364,7 +525,9 @@ borderRadius:"12px",
 
 fontSize:"18px"
 
+
 }}
+
 
 
 />
@@ -375,9 +538,12 @@ fontSize:"18px"
 
 <button
 
+
 onClick={generate}
 
+
 style={{
+
 
 marginTop:"20px",
 
@@ -385,39 +551,49 @@ padding:"15px 40px",
 
 borderRadius:"30px",
 
-border:"none",
-
 background:"#ec4899",
 
 color:"#fff",
+
+border:"none",
 
 fontSize:"18px",
 
 cursor:"pointer"
 
+
 }}
+
 
 >
 
+
 {
 
-loading
 
-?
+loading ?
+
 
 "AI分析中..."
 
+
 :
+
 
 "🔥 开始生成"
 
+
+
 }
+
 
 
 </button>
 
 
 
+
+
 </div>
 
 
@@ -425,33 +601,25 @@ loading
 
 
 
+
+
+
 {
+
 
 result &&
 
 <ResultCard result={result}/>
 
-}
-
-
-
-
-
-{
-
-result?.plans?.[0]?.score &&
-
-<ScoreCard score={result.plans[0].score}/>
 
 }
+
 
 
 
 
 </div>
 
-
-</main>
 
 
 )
