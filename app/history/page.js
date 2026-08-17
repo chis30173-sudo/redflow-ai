@@ -74,282 +74,180 @@ setRecords([])
 
 }
 
-
-
-
-
-
 return (
 
-
 <div
-
-
 style={{
-
-
 minHeight:"100vh",
-
 background:"#020617",
-
-color:"#fff",
-
-padding:"40px"
-
-
+padding:"40px",
+color:"#fff"
 }}
-
-
-
 >
 
-
 <h1>
-
-📚 我的历史记录
-
+📚 RedFlow AI 历史记录
 </h1>
 
 
-
-
-
-<button
-
-
-onClick={()=>window.location.href="/"}
-
-
-
+<div
 style={{
-
-
-marginRight:"15px"
-
+marginTop:"20px",
+display:"flex",
+gap:"15px"
 }}
-
-
-
 >
 
 
+<button
+onClick={()=>window.location.href="/"}
+style={{
+padding:"12px 20px",
+borderRadius:"10px",
+border:"none",
+cursor:"pointer"
+}}
+>
 返回首页
-
 </button>
-
-
 
 
 
 <button
-
-
 onClick={clearAll}
-
-
-
+style={{
+padding:"12px 20px",
+borderRadius:"10px",
+border:"none",
+background:"#ef4444",
+color:"#fff",
+cursor:"pointer"
+}}
 >
-
-
-清空记录
-
+清空历史
 </button>
 
 
-
-
-
+</div>
 
 
 
 {
-
-
 records.length===0 ?
 
 
-
-<p
-
+(
+<div
 style={{
-
 marginTop:"40px",
-
-color:"#94a3b8"
-
+background:"#1e293b",
+padding:"30px",
+borderRadius:"20px"
 }}
-
 >
 
 暂无生成记录
 
-</p>
-
+</div>
+)
 
 
 :
 
 
+(
+<div
+style={{
+marginTop:"30px",
+display:"grid",
+gap:"20px"
+}}
+>
 
+
+{
 records.map((item,index)=>(
 
 
-
 <div
-
-
 key={index}
-
-
 style={{
-
-
-marginTop:"25px",
-
 background:"#1e293b",
-
 padding:"25px",
-
 borderRadius:"20px"
-
-
 }}
-
-
-
 >
 
 
 <h2>
-
-
-🔥 {item.mode}
-
+🔥 {item.input}
 </h2>
 
 
-
+<p>
+模式：
+{item.mode}
+</p>
 
 
 <p>
-
-
-产品：
-
-{item.input}
-
-
-</p>
-
-
-
-
-
-<p
-
-
-style={{
-
-
-color:"#94a3b8"
-
-}}
-
-
-
->
-
-
 时间：
-
 {item.time}
-
-
 </p>
-
-
-
-
-
-
-
-<pre
-
-
-style={{
-
-
-whiteSpace:"pre-wrap",
-
-background:"#0f172a",
-
-padding:"15px",
-
-borderRadius:"10px"
-
-
-}}
-
-
-
->
-
-
-{JSON.stringify(
-
-item.result,
-
-null,
-
-2
-
-)}
-
-
-
-</pre>
-
-
 
 
 
 <button
 
+onClick={()=>{
 
-onClick={()=>remove(index)}
+alert(
+JSON.stringify(
+item.result,
+null,
+2
+)
+)
 
+}}
 
+style={{
+marginTop:"15px",
+padding:"10px 18px",
+borderRadius:"10px",
+border:"none",
+cursor:"pointer"
+}}
 
 >
 
-
-删除
+查看生成结果
 
 </button>
 
 
-
-
-
 </div>
-
 
 
 ))
 
-
-
 }
 
 
+</div>
+
+)
+
+}
 
 
 
 </div>
 
-
-
 )
 
-
 }
+
+
+
+
