@@ -41,12 +41,12 @@ setHistory(JSON.parse(data))
 },[])
 
 
-const data=localStorage.getItem("user")
+const userData=localStorage.getItem("user")
 
 
-if(data){
+if(userData){
 
-const oldUser = JSON.parse(data)
+const oldUser = JSON.parse(userData)
 
 const newUser = {
   ...oldUser,
@@ -963,9 +963,7 @@ loading ?
 
 
 
-{
-
-result && (
+{result && (
 
 <div>
 
@@ -979,8 +977,7 @@ result && (
 </h2>
 
 
-{
-history.map((item,index)=>(
+{history.map((item,index)=>(
 
 <div 
 key={index}
@@ -991,23 +988,18 @@ className="p-4"
 {item.title}
 </h3>
 
-
 <p>
 {item.time}
 </p>
 
-
 </div>
 
-))
-}
-
-
-</div>
+))}
 
 
 </div>
 
-)
 
-}
+</div>
+
+)}
