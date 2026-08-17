@@ -320,9 +320,6 @@ JSON.stringify(newHistory)
 setHistory(newHistory)
  // ===== A6.2 自动保存生成记录 =====
 
-const oldHistory = JSON.parse(
-  localStorage.getItem("history") || "[]"
-)
 
 
 const newRecord = {
