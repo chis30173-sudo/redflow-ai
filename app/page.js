@@ -551,7 +551,7 @@ user ?
 
 免费次数：
 
-{user.count}/5
+{user.count}/100
 
 
 
