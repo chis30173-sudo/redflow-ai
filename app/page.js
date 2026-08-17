@@ -280,11 +280,11 @@ const limitHistory = oldHistory.slice(0,50)
 
 localStorage.setItem(
   "history",
-  JSON.stringify(limitHistory)
+   JSON.stringify(limitHistory)
 )
 
 
-
+}
 
 
 
