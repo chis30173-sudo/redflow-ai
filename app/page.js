@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 
 import FeatureCard from "./components/FeatureCard"
 import ResultCard from "./components/ResultCard"
-import ScoreCard from "./components/ScoreCard"
 
 
 
@@ -23,9 +22,9 @@ const [user,setUser]=useState(null)
 
 
 
-// ======================
-// 检查登录状态
-// ======================
+// =====================
+// 读取用户
+// =====================
 
 useEffect(()=>{
 
@@ -45,20 +44,20 @@ setUser(JSON.parse(data))
 
 
 
-// ======================
-// 退出登录
-// ======================
+// =====================
+// 退出
+// =====================
 
 function logout(){
 
 
 localStorage.removeItem("user")
 
-
 setUser(null)
 
 
 }
+
 
 
 
@@ -97,14 +96,14 @@ desc:"规划账号成长路线"
 
 {
 id:"image",
-title:"🖼️ 爆款图文生成",
-desc:"一键生成小红书图文"
+title:"🖼️ 爆款图文",
+desc:"生成小红书图文方案"
 },
 
 
 {
 id:"trend",
-title:"📈 潮玩热点趋势",
+title:"📈 潮玩趋势",
 desc:"发现市场机会"
 }
 
@@ -116,16 +115,89 @@ desc:"发现市场机会"
 
 
 
+
 async function generate(){
 
 
-if(!input){
 
-alert("请输入产品或方向")
+// ===== 登录检查 =====
+
+if(!user){
+
+
+alert("请先登录体验")
+
+
+window.location.href="/login"
+
 
 return
 
+
 }
+
+
+
+
+
+// ===== 次数检查 =====
+
+if(user.count<=0){
+
+
+alert("免费体验次数已用完")
+
+
+return
+
+
+}
+
+
+
+
+// ===== 输入检查 =====
+
+if(!input){
+
+
+alert("请输入产品或方向")
+
+
+return
+
+
+}
+
+
+
+
+// ===== 扣次数 =====
+
+
+const newUser={
+
+...user,
+
+count:user.count-1
+
+}
+
+
+
+setUser(newUser)
+
+
+
+localStorage.setItem(
+
+"user",
+
+JSON.stringify(newUser)
+
+)
+
+
 
 
 
@@ -135,30 +207,41 @@ setResult(null)
 
 
 
+
 try{
 
 
 const res=await fetch("/api/generate",{
 
+
 method:"POST",
+
 
 headers:{
 
+
 "Content-Type":"application/json"
+
 
 },
 
 
+
 body:JSON.stringify({
+
 
 mode,
 
 input
 
+
 })
 
 
+
 })
+
+
 
 
 
@@ -172,23 +255,34 @@ setResult(data.result)
 
 }
 
+
+
 catch(error){
+
 
 
 setResult({
 
+
 title:"生成失败",
+
 
 content:error.message,
 
+
 tags:"",
 
+
 score:{}
+
+
 
 })
 
 
+
 }
+
 
 
 
@@ -203,7 +297,11 @@ setLoading(false)
 
 
 
+
+
+
 return (
+
 
 
 <div
@@ -226,13 +324,15 @@ position:"relative"
 }}
 
 
+
 >
 
 
 
 
 
-{/* 登录区域 */}
+{/* 用户区域 */}
+
 
 <div
 
@@ -248,6 +348,7 @@ top:"30px"
 
 
 }}
+
 
 
 >
@@ -269,28 +370,37 @@ user ?
 <br/>
 
 
-免费体验用户
+免费次数：
+
+{user.count}/5
+
 
 
 <br/>
 
 
+
 <button
+
 
 onClick={logout}
 
 
+
 style={{
 
-marginTop:"10px",
 
-cursor:"pointer"
+marginTop:"10px"
+
 
 }}
 
+
 >
 
+
 退出
+
 
 </button>
 
@@ -302,13 +412,18 @@ cursor:"pointer"
 :
 
 
+
 <button
+
 
 onClick={()=>window.location.href="/login"}
 
+
 >
 
+
 🔐 登录
+
 
 </button>
 
@@ -319,6 +434,7 @@ onClick={()=>window.location.href="/login"}
 
 
 </div>
+
 
 
 
@@ -338,6 +454,7 @@ fontSize:"36px"
 
 
 }}
+
 
 
 >
@@ -381,7 +498,6 @@ color:"#94a3b8"
 
 
 
-
 <div
 
 
@@ -400,14 +516,15 @@ marginTop:"40px"
 }}
 
 
->
 
+>
 
 
 {
 
 
 features.map(item=>(
+
 
 
 <div
@@ -419,6 +536,7 @@ key={item.id}
 onClick={()=>setMode(item.id)}
 
 
+
 style={{
 
 
@@ -426,6 +544,7 @@ cursor:"pointer"
 
 
 }}
+
 
 
 >
@@ -443,6 +562,7 @@ desc={item.desc}
 />
 
 
+
 </div>
 
 
@@ -455,7 +575,6 @@ desc={item.desc}
 
 
 </div>
-
 
 
 
@@ -482,6 +601,7 @@ borderRadius:"20px"
 }}
 
 
+
 >
 
 
@@ -503,13 +623,17 @@ borderRadius:"20px"
 <textarea
 
 
+
 value={input}
+
 
 
 onChange={(e)=>setInput(e.target.value)}
 
 
+
 placeholder="例如：拉布布、娃衣、明星周边"
+
 
 
 style={{
@@ -517,11 +641,15 @@ style={{
 
 width:"100%",
 
+
 height:"120px",
+
 
 padding:"15px",
 
+
 borderRadius:"12px",
+
 
 fontSize:"18px"
 
@@ -539,7 +667,9 @@ fontSize:"18px"
 <button
 
 
+
 onClick={generate}
+
 
 
 style={{
@@ -547,22 +677,30 @@ style={{
 
 marginTop:"20px",
 
+
 padding:"15px 40px",
+
 
 borderRadius:"30px",
 
+
 background:"#ec4899",
+
 
 color:"#fff",
 
+
 border:"none",
 
+
 fontSize:"18px",
+
 
 cursor:"pointer"
 
 
 }}
+
 
 
 >
@@ -592,8 +730,6 @@ loading ?
 
 
 
-
-
 </div>
 
 
@@ -609,7 +745,9 @@ loading ?
 
 result &&
 
+
 <ResultCard result={result}/>
+
 
 
 }
@@ -623,6 +761,7 @@ result &&
 
 
 )
+
 
 
 }
