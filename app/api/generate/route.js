@@ -28,6 +28,37 @@ if(user){
 
 
    const { mode, input } = body
+    let prompt = ""
+let productCategory = ""
+    // ===== A8.5 产品自动分类 =====
+
+let categoryPrompt = `
+
+你是一名电商商品分类专家。
+
+用户输入商品：
+
+${input}
+
+请判断：
+
+1. 商品类别
+2. 目标用户
+3. 消费场景
+4. 营销方向
+
+返回JSON：
+
+{
+"category":"",
+"user":"",
+"scene":"",
+"marketing":""
+}
+
+不要输出解释。
+
+`
 
     const apiKey = process.env.DEEPSEEK_API_KEY
 
@@ -41,10 +72,64 @@ if(user){
       })
 
     }
+    // ===== A8.5 产品自动分类 =====
+
+const categoryResponse = await fetch(
+"https://api.deepseek.com/chat/completions",
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"Authorization":`Bearer ${apiKey}`
+},
+
+body:JSON.stringify({
+
+model:"deepseek-chat",
+
+messages:[
+
+{
+role:"system",
+
+content:
+"你是专业电商商品分类AI，只返回JSON"
+
+},
+
+{
+
+role:"user",
+
+content: categoryPrompt
+
+}
+
+],
+
+temperature:0.3
+
+})
+
+}
+)
+
+
+const categoryData = await categoryResponse.json()
+
+
+const categoryText =
+categoryData.choices?.[0]?.message?.content || ""
+
+
+productCategory = categoryText
+.replace(/```json/g,"")
+.replace(/```/g,"")
+.trim()
 
 
 
-    let prompt = ""
 
 
 
@@ -63,6 +148,11 @@ if(user){
 产品：
 
 ${input}
+
+
+商品分类信息：
+
+${productCategory}
 
 
 生成10条爆款方案。
@@ -137,6 +227,11 @@ prompt = `
 产品：
 
 ${input}
+
+
+商品分类信息：
+
+${productCategory}
 
 
 
@@ -285,6 +380,11 @@ ${input}
 ${input}
 
 
+商品分类信息：
+
+${productCategory}
+
+
 分析：
 
 市场需求
@@ -345,6 +445,10 @@ ${input}
 ${input}
 
 
+商品分类信息：
+
+${productCategory}
+
 输出：
 
 市场热度
@@ -404,6 +508,9 @@ ${input}
 方向：
 
 ${input}
+商品分类信息：
+
+${productCategory}
 
 
 设计：
@@ -457,6 +564,9 @@ ${input}
 方向：
 
 ${input}
+商品分类信息：
+
+${productCategory}
 
 
 分析最新机会：
@@ -521,6 +631,10 @@ ${input}
 明星/方向：
 
 ${input}
+商品分类信息：
+
+${productCategory}
+
 
 
 分析：
@@ -585,6 +699,11 @@ ${input}
 产品：
 
 ${input}
+
+
+商品分类信息：
+
+${productCategory}
 
 
 生成爆款方案。
@@ -720,6 +839,17 @@ ${input}
 把食品变成保健品
 把普通商品强行套入潮玩。
 
+产品名称必须保持原意。
+
+禁止修改用户输入的商品类别。
+
+例如：
+鱼骨胸衣 = 女性内衣/塑形服装。
+
+不能生成：
+娃衣、BJD服饰、玩偶服。
+
+除非用户明确输入。
 6. 只输出JSON，不输出解释。
 `
 
