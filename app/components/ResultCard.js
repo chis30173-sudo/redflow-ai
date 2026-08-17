@@ -1,3 +1,5 @@
+"use client"
+
 export default function ResultCard({result}){
 
 
@@ -6,7 +8,6 @@ if(!result){
 return null
 
 }
-
 
 
 const plans = result.plans || []
@@ -41,14 +42,10 @@ color:"#fff"
 </h2>
 
 
-<hr/>
-
-
-
 
 {
 
-plans.map((item,index)=>(
+plans.map((plan,index)=>(
 
 
 <div
@@ -63,16 +60,17 @@ background:"#334155",
 
 padding:"25px",
 
-borderRadius:"20px"
+borderRadius:"15px"
 
 }}
 
 >
 
 
+
 <h2>
 
-🔥 {index+1}. {item.title}
+🔥 {index+1}. {plan.title}
 
 </h2>
 
@@ -80,45 +78,156 @@ borderRadius:"20px"
 
 
 
-<h3>
+{/* 普通内容 */}
+
+{
+
+plan.content &&
+
+<div>
 
 📝 文案：
+
+<p>
+
+{plan.content}
+
+</p>
+
+</div>
+
+}
+
+
+
+
+
+{/* A8.1 六页图文 */}
+
+{
+
+plan.pages &&
+
+
+<div>
+
+
+<h3>
+
+📸 六页小红书图文方案
 
 </h3>
 
 
-<p
+
+{
+
+
+plan.pages.map((page)=>(
+ 
+
+
+<div
+
+key={page.page}
 
 style={{
 
-lineHeight:"1.8",
+marginTop:"20px",
 
-whiteSpace:"pre-wrap"
+background:"#0f172a",
+
+padding:"20px",
+
+borderRadius:"12px"
 
 }}
 
 >
 
-{item.content}
+
+
+<h3>
+
+第 {page.page} 页
+
+</h3>
+
+
+<p>
+
+📌 标题：
+
+{page.title}
 
 </p>
 
 
 
+<p>
+
+📝 文案：
+
+{page.content}
+
+</p>
 
 
-<h3>
 
-🏷 标签：
+<p>
 
-</h3>
+🎨 图片Prompt：
+
+{page.image_prompt}
+
+</p>
 
 
-<div>
+
+</div>
+
+
+
+))
+
+
+}
+
+
+
+</div>
+
+}
+
+
+
+
+
+{/* 标签 */}
 
 {
 
-item.tags?.map((tag,i)=>(
+plan.tags &&
+
+
+<div
+
+style={{
+
+marginTop:"20px"
+
+}}
+
+>
+
+
+🏷 标签：
+
+
+{
+
+
+plan.tags.map((tag,i)=>(
 
 
 <span
@@ -127,15 +236,15 @@ key={i}
 
 style={{
 
-display:"inline-block",
-
 background:"#ec4899",
 
-padding:"6px 12px",
+padding:"8px 12px",
 
 borderRadius:"20px",
 
-margin:"5px"
+margin:"5px",
+
+display:"inline-block"
 
 }}
 
@@ -148,18 +257,26 @@ margin:"5px"
 
 ))
 
+
 }
+
+
 
 </div>
 
 
+}
 
 
+
+
+
+{/* 评分 */}
 
 
 {
 
-item.score &&
+plan.score &&
 
 
 <div
@@ -168,29 +285,25 @@ style={{
 
 marginTop:"20px",
 
-background:"#0f172a",
+background:"#020617",
 
-padding:"20px",
+padding:"15px",
 
-borderRadius:"15px"
+borderRadius:"10px"
 
 }}
 
 >
 
 
-<h3>
-
 📊 数据评分
-
-</h3>
 
 
 <p>
 
 🌊 蓝海指数：
 
-{item.score.blue}
+{plan.score.blue}
 
 </p>
 
@@ -199,7 +312,7 @@ borderRadius:"15px"
 
 🔥 热度指数：
 
-{item.score.hot}
+{plan.score.hot}
 
 </p>
 
@@ -208,9 +321,10 @@ borderRadius:"15px"
 
 💰 利润指数：
 
-{item.score.profit}
+{plan.score.profit}
 
 </p>
+
 
 
 </div>
@@ -222,52 +336,8 @@ borderRadius:"15px"
 
 
 
-
-<button
-
-onClick={()=>{
-
-navigator.clipboard.writeText(
-
-`
-
-${item.title}
-
-
-${item.content}
-
-
-标签：
-
-${item.tags?.join(" ")}
-
-`
-
-)
-
-}}
-
-style={{
-
-marginTop:"20px",
-
-padding:"10px 25px",
-
-borderRadius:"20px",
-
-cursor:"pointer"
-
-}}
-
->
-
-📋 复制方案
-
-</button>
-
-
-
 </div>
+
 
 
 ))
