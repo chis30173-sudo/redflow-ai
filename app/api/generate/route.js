@@ -90,10 +90,11 @@ model:"deepseek-chat",
 
 messages:[
 
+
 {
 role:"system",
 
-"content:
+content:
 `
 你是一名真实的小红书内容创作者，不是AI营销机器人。
 
@@ -205,7 +206,7 @@ BJD服饰
 只输出JSON。
 
 不要解释过程。
-`"
+`
 
 },
 
