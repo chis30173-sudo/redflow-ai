@@ -249,57 +249,42 @@ const data=await res.json()
 
 
 setResult(data.result)
-
-
-// ======================
-// 保存历史记录
-// ======================
+ // ===== A6.2 自动保存生成记录 =====
 
 const oldHistory = JSON.parse(
-
-localStorage.getItem("history") || "[]"
-
+  localStorage.getItem("history") || "[]"
 )
-
 
 
 const newRecord = {
 
+  id: Date.now(),
 
-mode: mode,
+  input: input,
 
+  mode: mode,
 
-input: input,
+  result: data.result,
 
-
-result: data.result,
-
-
-time: new Date().toLocaleString()
-
-
+  time: new Date().toLocaleString()
 
 }
-
 
 
 oldHistory.unshift(newRecord)
 
 
-
 // 最多保存50条
+const limitHistory = oldHistory.slice(0,50)
+
 
 localStorage.setItem(
-
-"history",
-
-JSON.stringify(oldHistory.slice(0,50))
-
+  "history",
+  JSON.stringify(limitHistory)
 )
 
 
 
-}
 
 
 
