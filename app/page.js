@@ -978,7 +978,7 @@ loading ?
 
 {history.map((item,index)=>(
 
-<div 
+<div
 key={index}
 className="p-4"
 >
@@ -987,9 +987,11 @@ className="p-4"
 {item.title}
 </h3>
 
+
 <p>
 {item.time}
 </p>
+
 
 </div>
 
@@ -1002,3 +1004,10 @@ className="p-4"
 </div>
 
 )}
+
+
+</div>
+
+)
+
+}
