@@ -11,430 +11,450 @@ import ScoreCard from "./components/ScoreCard"
 export default function Home(){
 
 
-  const [mode,setMode] = useState("batch")
+const [mode,setMode]=useState("image")
 
-  const [input,setInput] = useState("")
+const [input,setInput]=useState("")
 
-  const [result,setResult] = useState(null)
+const [result,setResult]=useState(null)
 
-  const [loading,setLoading] = useState(false)
+const [loading,setLoading]=useState(false)
 
 
 
-  const features=[
+const features=[
 
 
-    {
-      id:"batch",
-      title:"🔥 生成100条爆款",
-      desc:"批量生成小红书爆款内容"
-    },
+{
+id:"image",
+title:"🔥 爆款图文生成",
+desc:"一键生成小红书6页爆款图文"
+},
 
 
-    {
-      id:"blue",
-      title:"🌊 蓝海选品",
-      desc:"寻找低竞争高利润机会"
-    },
+{
+id:"batch",
+title:"🔥 100条爆款",
+desc:"批量生成爆款内容方案"
+},
 
 
-    {
-      id:"analyze",
-      title:"📊 爆款对标",
-      desc:"分析竞品市场打法"
-    },
+{
+id:"blue",
+title:"🌊 蓝海选品",
+desc:"寻找低竞争高利润产品"
+},
 
 
-    {
-      id:"ip",
-      title:"👤 个人IP打造",
-      desc:"规划赚钱型个人账号"
-    }
+{
+id:"analyze",
+title:"📊 爆款对标",
+desc:"分析竞品打法"
+},
 
 
-  ]
+{
+id:"ip",
+title:"👤 个人IP打造",
+desc:"规划账号成长路线"
+},
 
 
+{
+id:"trend",
+title:"📈 潮玩热点趋势",
+desc:"发现最新市场机会"
+},
 
 
+{
+id:"star",
+title:"⭐ 明星周边分析",
+desc:"分析粉丝经济机会"
+}
 
-  async function generate(){
 
+]
 
-    if(!input){
 
-      alert("请输入产品或方向")
 
-      return
 
-    }
 
+async function generate(){
 
 
-    setLoading(true)
+if(!input){
 
-    setResult(null)
+alert("请输入产品或方向")
 
+return
 
+}
 
-    try{
 
+setLoading(true)
 
-      const res = await fetch("/api/generate",{
+setResult(null)
 
 
-        method:"POST",
 
+try{
 
-        headers:{
 
+const res = await fetch("/api/generate",{
 
-          "Content-Type":"application/json"
+method:"POST",
 
+headers:{
 
-        },
+"Content-Type":"application/json"
 
+},
 
-        body:JSON.stringify({
 
-          mode,
+body:JSON.stringify({
 
-          input
+mode,
 
-        })
+input
 
+})
 
-      })
 
+})
 
 
-      const data = await res.json()
 
+const data=await res.json()
 
 
-      setResult(data.result || data)
 
+setResult(
+data.result || data
+)
 
 
-    }
 
+}
 
-    catch(error){
+catch(error){
 
 
-      setResult({
+setResult({
 
-        title:"错误",
+plans:[
 
-        content:error.message,
+{
 
-        tags:"",
+title:"生成失败",
 
-        score:{
+content:error.message,
 
-          blue:0,
+tags:[],
 
-          hot:0,
+score:{
 
-          profit:0
+blue:0,
 
-        }
+hot:0,
 
-      })
+profit:0
 
+}
 
-    }
+}
 
+]
 
+})
 
-    setLoading(false)
 
+}
 
-  }
 
 
+setLoading(false)
 
 
+}
 
 
-  return (
 
-    <main
 
-      style={{
 
-        minHeight:"100vh",
 
-        background:"#020617",
+return (
 
-        padding:"40px",
+<main
 
-        color:"#fff"
+style={{
 
-      }}
+minHeight:"100vh",
 
-    >
+background:"#020617",
 
+padding:"40px",
 
-      <div
+color:"#fff"
 
-        style={{
+}}
 
-          maxWidth:"1100px",
+>
 
-          margin:"auto"
 
-        }}
+<div
 
-      >
+style={{
 
+maxWidth:"1200px",
 
-        <h1
+margin:"auto"
 
-          style={{
+}}
 
-            textAlign:"center",
+>
 
-            fontSize:"40px"
 
-          }}
+<h1
 
-        >
+style={{
 
-          🔥 RedFlow AI
+textAlign:"center",
 
-        </h1>
+fontSize:"40px"
 
+}}
 
+>
 
+🔥 RedFlow AI
 
-        <p
+</h1>
 
-          style={{
 
-            textAlign:"center",
 
-            color:"#94a3b8"
+<p
 
-          }}
+style={{
 
-        >
+textAlign:"center",
 
-          小红书卖家 · 潮玩商家 · 个人IP增长助手
+color:"#94a3b8"
 
-        </p>
+}}
 
+>
 
+小红书AI增长助手 · 潮玩商业分析
 
+</p>
 
 
-        <div
 
-          style={{
 
-            display:"grid",
 
-            gridTemplateColumns:
-            "repeat(auto-fit,minmax(220px,1fr))",
+<div
 
-            gap:"20px",
+style={{
 
-            marginTop:"40px"
+display:"grid",
 
-          }}
+gridTemplateColumns:
+"repeat(auto-fit,minmax(220px,1fr))",
 
-        >
+gap:"20px",
 
+marginTop:"40px"
 
-        {
+}}
 
-          features.map(item=>(
+>
 
 
-            <div
+{
 
-              key={item.id}
+features.map(item=>(
 
-              onClick={()=>setMode(item.id)}
 
-              style={{
+<div
 
-                cursor:"pointer"
+key={item.id}
 
-              }}
+onClick={()=>setMode(item.id)}
 
-            >
+style={{
 
+cursor:"pointer"
 
-              <FeatureCard
+}}
 
-                title={item.title}
+>
 
-                desc={item.desc}
 
-              />
+<FeatureCard
 
+title={item.title}
 
-            </div>
+desc={item.desc}
 
+/>
 
-          ))
 
-        }
+</div>
 
 
-        </div>
+))
 
 
+}
 
 
+</div>
 
 
-        <div
 
-          style={{
 
-            marginTop:"40px",
 
-            background:"#1e293b",
 
-            padding:"30px",
 
-            borderRadius:"20px"
+<div
 
-          }}
+style={{
 
-        >
+marginTop:"40px",
 
+background:"#1e293b",
 
+padding:"30px",
 
-          <h2>
+borderRadius:"20px"
 
-          当前模式：
+}}
 
-          {mode}
+>
 
-          </h2>
 
+<h2>
 
+当前模式：
 
+{mode}
 
-          <textarea
+</h2>
 
 
-            value={input}
 
 
-            onChange={(e)=>setInput(e.target.value)}
+<textarea
 
+value={input}
 
-            placeholder="例如：Labubu娃衣、潮玩盲盒、明星周边"
+onChange={(e)=>setInput(e.target.value)}
 
+placeholder="例如：LABUBU娃衣、潮玩盲盒、明星周边"
 
-            style={{
+style={{
 
-              width:"100%",
+width:"100%",
 
-              height:"120px",
+height:"120px",
 
-              padding:"15px",
+padding:"15px",
 
-              borderRadius:"12px",
+borderRadius:"12px",
 
-              fontSize:"18px"
+fontSize:"18px"
 
-            }}
+}}
 
 
-          />
+/>
 
 
 
 
 
-          <button
+<button
 
+onClick={generate}
 
-            onClick={generate}
+style={{
 
+marginTop:"20px",
 
-            style={{
+padding:"15px 40px",
 
-              marginTop:"20px",
+borderRadius:"30px",
 
-              padding:"15px 40px",
+border:"none",
 
-              borderRadius:"30px",
+background:"#ec4899",
 
-              border:"none",
+color:"#fff",
 
-              background:"#ec4899",
+fontSize:"18px",
 
-              color:"#fff",
+cursor:"pointer"
 
-              cursor:"pointer",
+}}
 
-              fontSize:"18px"
+>
 
-            }}
+{
 
+loading
 
-          >
+?
 
+"AI分析中..."
 
-          {
+:
 
-            loading
+"🔥 开始生成"
 
-            ?
+}
 
-            "AI分析中..."
 
-            :
+</button>
 
-            "🔥 开始生成"
 
-          }
 
+</div>
 
-          </button>
 
 
-        </div>
 
 
 
+{
 
+result &&
 
+<ResultCard result={result}/>
 
-        {
+}
 
-          result &&
 
-          <ResultCard result={result}/>
 
-        }
 
 
+{
 
-        {
+result?.plans?.[0]?.score &&
 
-          result?.score &&
+<ScoreCard score={result.plans[0].score}/>
 
-          <ScoreCard score={result.score}/>
+}
 
-        }
 
 
 
+</div>
 
-      </div>
 
+</main>
 
-    </main>
 
-
-  )
+)
 
 
 }
