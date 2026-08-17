@@ -1,3 +1,5 @@
+import { painPoints } from "./painPoints"
+
 export async function POST(request) {
   // ===== A6 免费次数限制 =====
 
@@ -96,7 +98,7 @@ role:"system",
 
 content:
 `
-你是一名真实的小红书内容创作者，不是AI营销机器人。
+你是专业电商商品分类AI，只返回JSON。
 
 你的任务：
 模拟真实用户分享产品体验。
@@ -239,6 +241,38 @@ productCategory = categoryText
 .replace(/```json/g,"")
 .replace(/```/g,"")
 .trim()
+    let userPainPoints = ""
+
+
+if(productCategory.includes("服装")){
+
+userPainPoints = painPoints["服装"].join("、")
+
+}
+
+else if(productCategory.includes("美妆")){
+
+userPainPoints = painPoints["美妆"].join("、")
+
+}
+
+else if(productCategory.includes("食品")){
+
+userPainPoints = painPoints["食品"].join("、")
+
+}
+
+else if(productCategory.includes("潮玩")){
+
+userPainPoints = painPoints["潮玩"].join("、")
+
+}
+
+else{
+
+userPainPoints = painPoints["生活用品"].join("、")
+
+}
 
 
 
@@ -265,6 +299,9 @@ ${input}
 商品分类信息：
 
 ${productCategory}
+用户真实痛点：
+
+${userPainPoints}
 
 
 生成10条爆款方案。
