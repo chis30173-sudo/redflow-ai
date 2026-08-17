@@ -39,8 +39,7 @@ setHistory(JSON.parse(data))
 }
 
 },[])
-
-
+useEffect(()=>{
 const userData=localStorage.getItem("user")
 
 
