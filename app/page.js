@@ -16,6 +16,8 @@ const [input,setInput]=useState("")
 
 const [result,setResult]=useState(null)
 
+const [history,setHistory]=useState([])
+
 const [loading,setLoading]=useState(false)
 
 const [user,setUser]=useState(null)
@@ -27,6 +29,16 @@ const [user,setUser]=useState(null)
 // =====================
 
 useEffect(()=>{
+
+const data = localStorage.getItem("history")
+
+if(data){
+
+setHistory(JSON.parse(data))
+
+}
+
+},[])
 
 
 const data=localStorage.getItem("user")
@@ -275,6 +287,38 @@ const data=await res.json()
 
 
 setResult(data.result)
+  const item={
+
+title:input,
+
+mode:mode,
+
+time:new Date().toLocaleString(),
+
+content:data.result
+
+}
+
+
+const oldHistory =
+JSON.parse(
+localStorage.getItem("history") || "[]"
+)
+
+
+const newHistory=[
+item,
+...oldHistory
+]
+
+
+localStorage.setItem(
+"history",
+JSON.stringify(newHistory)
+)
+
+
+setHistory(newHistory)
  // ===== A6.2 自动保存生成记录 =====
 
 const oldHistory = JSON.parse(
@@ -921,26 +965,49 @@ loading ?
 
 {
 
+result && (
 
-result &&
-
+<div>
 
 <ResultCard result={result}/>
 
 
+<div className="mt-8">
 
+<h2>
+📚 我的作品
+</h2>
+
+
+{
+history.map((item,index)=>(
+
+<div 
+key={index}
+className="p-4"
+>
+
+<h3>
+{item.title}
+</h3>
+
+
+<p>
+{item.time}
+</p>
+
+
+</div>
+
+))
 }
-
-
-
 
 
 </div>
 
 
+</div>
 
 )
-
-
 
 }
