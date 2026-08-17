@@ -93,9 +93,7 @@ messages:[
 {
 role:"system",
 
-content:
 "content:
-
 `
 你是一名真实的小红书内容创作者，不是AI营销机器人。
 
