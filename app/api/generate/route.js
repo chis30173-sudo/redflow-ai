@@ -10,7 +10,7 @@ const user = body.user
 
 if(user){
 
-  const count = user.count ?? 3
+  const count = user.count ?? 100
 
 
   if(count <= 0){
