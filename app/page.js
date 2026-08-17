@@ -34,7 +34,33 @@ const data=localStorage.getItem("user")
 
 if(data){
 
-setUser(JSON.parse(data))
+const oldUser = JSON.parse(data)
+
+const newUser = {
+  ...oldUser,
+  count:100
+}
+
+localStorage.setItem(
+"user",
+JSON.stringify(newUser)
+)
+
+setUser(newUser)
+
+}
+else{
+
+const newUser = {
+  count:100
+}
+
+localStorage.setItem(
+"user",
+JSON.stringify(newUser)
+)
+
+setUser(newUser)
 
 }
 
