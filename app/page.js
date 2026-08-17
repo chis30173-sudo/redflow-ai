@@ -372,6 +372,128 @@ position:"relative"
 
 
 >
+{/* 用户入口 */}
+
+<div
+style={{
+display:"flex",
+justifyContent:"flex-end",
+gap:"15px",
+marginBottom:"20px"
+}}
+>
+
+
+{
+user ? (
+
+<>
+
+<button
+
+onClick={()=>{
+
+window.location.href="/user"
+
+}}
+
+style={{
+
+padding:"10px 18px",
+
+borderRadius:"12px",
+
+background:"#ec4899",
+
+color:"#fff",
+
+border:"none",
+
+cursor:"pointer"
+
+}}
+
+>
+
+👤 用户中心
+
+</button>
+
+
+
+<button
+
+onClick={()=>{
+
+window.location.href="/history"
+
+}}
+
+style={{
+
+padding:"10px 18px",
+
+borderRadius:"12px",
+
+background:"#334155",
+
+color:"#fff",
+
+border:"none",
+
+cursor:"pointer"
+
+}}
+
+>
+
+📚 历史记录
+
+</button>
+
+</>
+
+
+):(
+
+
+<button
+
+onClick={()=>{
+
+window.location.href="/login"
+
+}}
+
+style={{
+
+padding:"10px 18px",
+
+borderRadius:"12px",
+
+background:"#ec4899",
+
+color:"#fff",
+
+border:"none",
+
+cursor:"pointer"
+
+}}
+
+>
+
+登录
+
+</button>
+
+
+)
+
+}
+
+
+</div>
 
 
 
