@@ -1,10 +1,33 @@
 export async function POST(request) {
+  // ===== A6 免费次数限制 =====
+
+const body = await request.json()
+
+const user = body.user
+
+
+if(user){
+
+  const count = user.count ?? 3
+
+
+  if(count <= 0){
+
+    return Response.json({
+
+      error:"今日免费次数已用完，升级会员解锁无限生成"
+
+    })
+
+  }
+
+}
+  
 
   try {
 
 
-    const { mode, input } = await request.json()
-
+   const { mode, input } = body
 
     const apiKey = process.env.DEEPSEEK_API_KEY
 
