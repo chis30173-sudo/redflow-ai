@@ -524,108 +524,73 @@ cursor:"pointer"
 
 {/* 用户区域 */}
 
-
 <div
-
-
 style={{
-
-
-position:"absolute",
-
-right:"40px",
-
-top:"30px"
-
-
+  position:"absolute",
+  right:"40px",
+  top:"30px"
 }}
-
-
-
 >
-
 
 {
+user ? (
+
+  <div className="flex flex-col items-stretch gap-3 bg-slate-800 p-5 rounded-xl text-white w-[220px]">
+
+    <div className="break-all">
+      👤 {user.email}
+    </div>
 
 
-user ?
+    <div>
+      免费次数：
+      <br/>
+      {user.count}/100
+    </div>
 
 
-
-<div className="fixed top-5 right-5 flex flex-col gap-4 z-50 bg-slate-800 p-5 rounded-xl text-white min-w-[180px]">
-
-
-<div>
-👤 {user.email}
-</div>
-
-
-
-
-<div>
-免费次数：{user.count}/100
-</div>
+    <button
+    onClick={()=>{
+      window.location.href="/user"
+    }}
+    className="w-full bg-pink-500 rounded-lg p-2"
+    >
+      👤 用户中心
+    </button>
 
 
+    <button
+    onClick={logout}
+    className="w-full bg-slate-600 rounded-lg p-2"
+    >
+      退出
+    </button>
 
 
+  </div>
 
 
-<button
+) : (
 
 
-onClick={logout}
+  <button
+
+  onClick={()=>{
+    window.location.href="/login"
+  }}
+
+  className="bg-pink-500 rounded-lg p-2 text-white"
+
+  >
+    登录
+  </button>
 
 
-
-style={{
-
-
-marginTop:"10px"
-
-
-}}
-
-
->
-
-
-退出
-
-
-</button>
-
-
-</div>
-
-
-
-:
-
-
-
-<button
-
-
-onClick={()=>window.location.href="/login"}
-
-
->
-
-
-🔐 登录
-
-
-</button>
-
-
+)
 
 }
 
-
-
 </div>
-
 
 
 
