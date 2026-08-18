@@ -526,16 +526,17 @@ cursor:"pointer"
 
 <div
 style={{
-  position:"absolute",
-  right:"40px",
-  top:"30px"
+position:"fixed",
+right:"40px",
+top:"30px"
+}}
 }}
 >
 
 {
 user ? (
 
-  <div className="flex flex-col items-stretch gap-3 bg-slate-800 p-5 rounded-xl text-white w-[220px]">
+ <div className="flex flex-col items-center gap-4 bg-slate-800 p-5 rounded-xl text-white w-[220px]">
 
     <div className="break-all">
       👤 {user.email}
@@ -553,7 +554,7 @@ user ? (
     onClick={()=>{
       window.location.href="/user"
     }}
-    className="w-full bg-pink-500 rounded-lg p-2"
+    className="w-full bg-pink-500 text-white rounded-lg p-2"
     >
       👤 用户中心
     </button>
