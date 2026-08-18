@@ -530,7 +530,6 @@ position:"fixed",
 right:"40px",
 top:"30px"
 }}
-}}
 >
 
 {
