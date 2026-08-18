@@ -580,7 +580,7 @@ user ?
 
 
 
-<div>
+<div className="fixed top-5 right-5 flex flex-col gap-3 z-50 bg-slate-800 p-4 rounded-xl text-white">
 
 
 👤 {user.email}
