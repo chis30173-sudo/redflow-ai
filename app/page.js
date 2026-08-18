@@ -552,22 +552,22 @@ user ?
 
 
 
-<div className="fixed top-5 right-5 flex flex-col gap-3 z-50 bg-slate-800 p-4 rounded-xl text-white">
+<div className="fixed top-5 right-5 flex flex-col gap-4 z-50 bg-slate-800 p-5 rounded-xl text-white min-w-[180px]">
 
 
+<div>
 👤 {user.email}
-
-
-<br/>
-
-
-免费次数：
-
-{user.count}/100
+</div>
 
 
 
-<br/>
+
+<div>
+免费次数：{user.count}/100
+</div>
+
+
+
 
 
 
