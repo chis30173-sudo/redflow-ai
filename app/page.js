@@ -472,35 +472,7 @@ cursor:"pointer"
 
 
 
-<button
 
-onClick={()=>{
-
-window.location.href="/history"
-
-}}
-
-style={{
-
-padding:"10px 18px",
-
-borderRadius:"12px",
-
-background:"#334155",
-
-color:"#fff",
-
-border:"none",
-
-cursor:"pointer"
-
-}}
-
->
-
-📚 历史记录
-
-</button>
 
 </>
 
