@@ -968,31 +968,7 @@ loading ?
 
 <div className="mt-8">
 
-<h2>
-📚 我的作品
-</h2>
 
-
-{history.map((item,index)=>(
-
-<div
-key={index}
-className="p-4"
->
-
-<h3>
-{item.title}
-</h3>
-
-
-<p>
-{item.time}
-</p>
-
-
-</div>
-
-))}
 
 
 </div>
